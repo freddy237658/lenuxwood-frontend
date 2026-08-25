@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "home": "Home",
+    "catalogue": "Catalogue",
+    "realisations": "Our Work",
+    "about": "About",
+    "contact": "Contact",
+    "quote": "Get a Quote"
+  },
+  "topbar": {
+    "shipping": "Delivery across Cameroon · Pay with Orange Money & MTN MoMo"
+  },
+  "home": {
+    "badge": "Woodcraft artisans for over 15 years",
+    "title1": "Wood,",
+    "title2": "crafted",
+    "title3": "to last.",
+    "subtitle": "Roofing, furniture, ceilings, floors, doors and wardrobes, made to measure. LenuxWood dresses your home from roof to floor, with Cameroonian wood craftsmanship.",
+    "ctaQuote": "Get a quote",
+    "ctaWork": "See our work",
+    "stat1": "Projects delivered",
+    "stat2": "Years of experience",
+    "stat3": "Cities covered",
+    "modulesEyebrow": "Our modules",
+    "modulesTitle": "All things wood, under one roof.",
+    "modulesSubtitle": "From structure to the final finishing touch, every module is designed, crafted and installed by our teams.",
+    "seeCatalogue": "See the full catalogue",
+    "workEyebrow": "Our work",
+    "workTitle": "Projects that speak for themselves.",
+    "seeAllWork": "See the full gallery",
+    "whyEyebrow": "Why LenuxWood",
+    "whyTitle": "Artisan standards, at Cameroon's scale.",
+    "ctaBandEyebrow": "Ready to start?",
+    "ctaBandTitle1": "Describe your project,",
+    "ctaBandTitle2": "we'll handle the rest.",
+    "ctaBandSubtitle": "Standard furniture or custom build — get a clear quote within 48h, anywhere in Cameroon.",
+    "ctaBandButton": "Get my free quote"
+  },
+  "modules": {
+    "charpente": { "name": "Roofing", "desc": "Sturdy roof structures, engineered to last through every season." },
+    "cuisine": { "name": "Kitchen furniture", "desc": "Custom kitchens, designed for everyday use and style." },
+    "salon": { "name": "Living room furniture", "desc": "Coffee tables, TV units, bookshelves and elegant storage." },
+    "chambre": { "name": "Bedroom furniture", "desc": "Beds, headboards and wardrobes designed for rest." },
+    "plafonds": { "name": "Ceilings", "desc": "Suspended ceilings and wood panelling for a warm interior." },
+    "sols": { "name": "Wood flooring", "desc": "Solid flooring and coverings, installed with precision." },
+    "portes": { "name": "Doors", "desc": "Custom interior and exterior doors, secure and durable." },
+    "armoires": { "name": "Wardrobes", "desc": "Optimised storage, tailored to every room in the house." }
+  },
+  "footer": {
+    "tagline": "Wood joinery and furniture, serving all of Cameroon.",
+    "modules": "Modules",
+    "company": "Company",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  }
+}

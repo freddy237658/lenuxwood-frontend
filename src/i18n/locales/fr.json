@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "catalogue": "Catalogue",
+    "realisations": "Réalisations",
+    "about": "À propos",
+    "contact": "Contact",
+    "quote": "Demander un devis"
+  },
+  "topbar": {
+    "shipping": "Livraison partout au Cameroun · Paiement Orange Money & MTN MoMo"
+  },
+  "home": {
+    "badge": "Artisans du bois depuis plus de 15 ans",
+    "title1": "Le bois,",
+    "title2": "façonné",
+    "title3": "pour durer.",
+    "subtitle": "Charpente, meubles, plafonds, sols, portes et armoires sur mesure. LenuxWood habille votre maison du toit au sol, avec le savoir-faire du bois camerounais.",
+    "ctaQuote": "Demander un devis",
+    "ctaWork": "Voir nos réalisations",
+    "stat1": "Projets réalisés",
+    "stat2": "Ans d'expérience",
+    "stat3": "Villes couvertes",
+    "modulesEyebrow": "Nos modules",
+    "modulesTitle": "Tout le bois, sous un seul toit.",
+    "modulesSubtitle": "De la structure au dernier détail de finition, chaque module est pensé, façonné et posé par nos équipes.",
+    "seeCatalogue": "Voir tout le catalogue",
+    "workEyebrow": "Réalisations",
+    "workTitle": "Des projets qui parlent d'eux-mêmes.",
+    "seeAllWork": "Toute la galerie",
+    "whyEyebrow": "Pourquoi LenuxWood",
+    "whyTitle": "L'exigence artisanale, à l'échelle du Cameroun.",
+    "ctaBandEyebrow": "Prêt à démarrer ?",
+    "ctaBandTitle1": "Décrivez votre projet,",
+    "ctaBandTitle2": "on s'occupe du reste.",
+    "ctaBandSubtitle": "Meuble standard ou fabrication sur mesure — obtenez un devis clair sous 48h, partout au Cameroun.",
+    "ctaBandButton": "Demander mon devis gratuit"
+  },
+  "modules": {
+    "charpente": { "name": "Charpente", "desc": "Structures de toiture robustes, calculées pour durer sous toutes les saisons." },
+    "cuisine": { "name": "Meubles de cuisine", "desc": "Cuisines sur mesure, pensées pour l'usage quotidien et le style." },
+    "salon": { "name": "Meubles de salon", "desc": "Tables basses, meubles TV, bibliothèques et rangements élégants." },
+    "chambre": { "name": "Meubles de chambre", "desc": "Lits, têtes de lit et dressings pensés pour le repos." },
+    "plafonds": { "name": "Plafonds", "desc": "Faux-plafonds et habillages bois pour un intérieur chaleureux." },
+    "sols": { "name": "Sols en bois", "desc": "Parquets et revêtements de sol, posés avec précision." },
+    "portes": { "name": "Portes", "desc": "Portes intérieures et extérieures sur mesure, sécurisées." },
+    "armoires": { "name": "Armoires", "desc": "Rangements optimisés, adaptés à chaque pièce de la maison." }
+  },
+  "footer": {
+    "tagline": "Menuiserie et ameublement en bois, au service de tout le Cameroun.",
+    "modules": "Modules",
+    "company": "Entreprise",
+    "contact": "Contact",
+    "rights": "Tous droits réservés."
+  }
+}
