@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = '237600000000' // TODO: remplacer par le vrai numéro LenuxWood (format international sans +)
+const WHATSAPP_NUMBER = '652964884' // TODO: remplacer par le vrai numéro LenuxWood (format international sans +)
 const DEFAULT_MESSAGE = "Bonjour LenuxWood, je souhaite avoir des informations sur vos produits."
 
 export default function WhatsAppButton() {
