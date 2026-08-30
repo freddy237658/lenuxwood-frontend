@@ -1,17 +1,41 @@
+import { useState } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
-import { ShieldCheck } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { ShieldCheck, Loader2 } from 'lucide-react'
 import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
 import ProductCard from '../components/ProductCard'
-import { getProductBySlug, PRODUCTS } from '../data/products'
+import { useProduct, useProducts } from '../hooks/useProducts'
+import { categoryName } from '../hooks/useCategories'
+import { formatPrice } from '../lib/format'
+
+const FALLBACK_COLOR = '#6B4426'
 
 export default function Product() {
   const { slug } = useParams()
-  const product = getProductBySlug(slug)
+  const { i18n } = useTranslation()
+  const { product, loading, error } = useProduct(slug)
+  const { products: allProducts } = useProducts()
+  const [activeImage, setActiveImage] = useState(0)
 
-  if (!product) return <Navigate to="/catalogue" replace />
+  if (loading) {
+    return (
+      <section className="bg-cream-50 py-24">
+        <div className="max-w-7xl mx-auto px-5 flex items-center gap-2 text-wood-500">
+          <Loader2 size={18} className="animate-spin" /> Chargement du produit...
+        </div>
+      </section>
+    )
+  }
 
-  const similar = PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 3)
+  if (error || !product) return <Navigate to="/catalogue" replace />
+
+  const images = product.images || []
+  const mainImage = images[activeImage]?.url
+
+  const similar = allProducts
+    .filter((p) => p.category?.slug === product.category?.slug && p.id !== product.id)
+    .slice(0, 3)
 
   return (
     <section className="bg-cream-50 py-14 md:py-20">
@@ -25,46 +49,61 @@ export default function Product() {
         <div className="grid lg:grid-cols-2 gap-12">
           <Reveal>
             <div className="aspect-square rounded-sm overflow-hidden relative mb-4">
-              <div className="absolute inset-0 grain-bg" style={{ backgroundColor: product.color }} />
+              {mainImage ? (
+                <img src={mainImage} alt={product.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 grain-bg" style={{ backgroundColor: FALLBACK_COLOR }} />
+              )}
             </div>
-            <div className="grid grid-cols-4 gap-3">
-              {[product.color, '#8A5C34', '#3E2717', '#A97A48'].map((c, i) => (
-                <div
-                  key={i}
-                  className={`aspect-square rounded-sm grain-bg cursor-pointer ${i === 0 ? 'border-2 border-red-600' : 'opacity-70'}`}
-                  style={{ backgroundColor: c }}
-                />
-              ))}
-            </div>
+            {images.length > 1 && (
+              <div className="grid grid-cols-4 gap-3">
+                {images.map((img, i) => (
+                  <button
+                    key={img.id}
+                    onClick={() => setActiveImage(i)}
+                    className={`aspect-square rounded-sm overflow-hidden ${
+                      i === activeImage ? 'border-2 border-red-600' : 'opacity-70'
+                    }`}
+                  >
+                    <img src={img.url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </Reveal>
 
           <Reveal delay={100}>
-            <p className="text-xs font-bold tracking-[0.2em] text-red-600 mb-3">{product.categoryLabel.toUpperCase()}</p>
+            <p className="text-xs font-bold tracking-[0.2em] text-red-600 mb-3">
+              {product.category ? categoryName(product.category, i18n.language).toUpperCase() : ''}
+            </p>
             <h1 className="font-display text-3xl md:text-4xl font-semibold text-wood-950 mb-3">{product.name}</h1>
             <p className="text-2xl font-semibold text-wood-900 mb-6">
-              {product.price} FCFA <span className="text-sm font-normal text-wood-500">à partir de</span>
+              {formatPrice(product.price, product.price_unit)} FCFA{' '}
+              <span className="text-sm font-normal text-wood-500">à partir de</span>
             </p>
             <p className="text-wood-600 leading-relaxed mb-8">
-              Fabrication sur mesure en {product.essence.toLowerCase()}, finition {product.finish.toLowerCase()}.
-              Structure renforcée, quincaillerie premium. Chaque module est adapté aux dimensions exactes de votre pièce.
+              {product.description ||
+                `Fabrication sur mesure${product.essence ? ` en ${product.essence.toLowerCase()}` : ''}${
+                  product.finish ? `, finition ${product.finish.toLowerCase()}` : ''
+                }. Structure renforcée, quincaillerie premium. Chaque module est adapté aux dimensions exactes de votre pièce.`}
             </p>
 
             <div className="grid grid-cols-2 gap-4 mb-8 text-sm">
               <div className="border-t border-wood-700/15 pt-3">
                 <p className="text-wood-500 text-xs mb-1">Essence</p>
-                <p className="text-wood-900 font-medium">{product.essence}</p>
+                <p className="text-wood-900 font-medium">{product.essence || '—'}</p>
               </div>
               <div className="border-t border-wood-700/15 pt-3">
                 <p className="text-wood-500 text-xs mb-1">Finition</p>
-                <p className="text-wood-900 font-medium">{product.finish}</p>
+                <p className="text-wood-900 font-medium">{product.finish || '—'}</p>
               </div>
               <div className="border-t border-wood-700/15 pt-3">
                 <p className="text-wood-500 text-xs mb-1">Délai de fabrication</p>
-                <p className="text-wood-900 font-medium">{product.delay}</p>
+                <p className="text-wood-900 font-medium">{product.manufacturing_delay || '—'}</p>
               </div>
               <div className="border-t border-wood-700/15 pt-3">
                 <p className="text-wood-500 text-xs mb-1">Garantie</p>
-                <p className="text-wood-900 font-medium">{product.warranty}</p>
+                <p className="text-wood-900 font-medium">{product.warranty || '—'}</p>
               </div>
             </div>
 

@@ -1,8 +1,9 @@
-import { NavLink, Outlet, Link } from 'react-router-dom'
+import { NavLink, Outlet, Link,useNavigate } from 'react-router-dom'
 import { ShoppingCart, ClipboardList, MessageCircle, User, LogOut, ExternalLink } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { CLIENT_CONVERSATION } from '../data/client-messages-mock'
 import logo from '../assets/logo.jpg'
+
 
 const NAV = [
   { to: '/compte', label: 'Mes commandes', icon: ShoppingCart, end: true },
@@ -13,6 +14,7 @@ const NAV = [
 
 export default function ClientLayout() {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const unread = CLIENT_CONVERSATION.messages.filter((m) => m.from === 'admin' && !m.read).length
 
   return (
@@ -59,7 +61,7 @@ export default function ClientLayout() {
                 Retour au site
               </Link>
               <button
-                onClick={logout}
+                onClick={async () => { await logout(); navigate('/') }}
                 className="w-full flex items-center gap-3 px-5 py-3.5 text-red-600 hover:bg-cream-100 border-t border-wood-700/10 transition"
               >
                 <LogOut size={16} />

@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import Header from './Header'
 import Footer from './Footer'
 import WhatsAppButton from '../ui/WhatsAppButton'
+import AssistantButton from '../ui/AssistantButton'
 
 export default function Layout() {
   const { pathname } = useLocation()
@@ -18,6 +19,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <AssistantButton />
       <WhatsAppButton />
     </div>
   )

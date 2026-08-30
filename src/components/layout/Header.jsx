@@ -24,8 +24,8 @@ export default function Header() {
 
   const changeLang = (lng) => i18n.changeLanguage(lng)
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     setAccountOpen(false)
     navigate('/')
   }
@@ -47,7 +47,7 @@ export default function Header() {
             <span className="text-oak-400">✦</span> {t('topbar.shipping')}
           </p>
           <div className="hidden md:flex items-center gap-4 shrink-0">
-            <span className="tracking-wide">+237 6XX XXX XXX</span>
+            <span className="tracking-wide">+237 6 97 64 77 99</span>
             <span className="w-px h-3 bg-wood-700" />
             <button
               onClick={() => changeLang('fr')}

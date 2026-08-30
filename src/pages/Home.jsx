@@ -4,10 +4,7 @@ import { ArrowRight, Check, Ruler, Smartphone, Truck } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Reveal from '../components/ui/Reveal'
 import ModuleCard from '../components/ModuleCard'
-import { MODULES } from '../data/modules'
-
-const MARQUEE_KEYS = ['charpente', 'cuisine', 'salon', 'chambre', 'plafonds', 'sols', 'portes', 'armoires']
-
+import { useCategories, categoryName } from '../hooks/useCategories'
 function Counter({ target, suffix = '' }) {
   const [value, setValue] = useState(0)
 
@@ -51,7 +48,8 @@ const FEATURES = [
 ]
 
 export default function Home() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const { categories } = useCategories()
 
   return (
     <>
@@ -128,9 +126,9 @@ export default function Home() {
           <div className="flex w-max animate-scroll-left">
             {[0, 1].map((rep) => (
               <span key={rep} className="flex items-center gap-3 pr-10 text-cream-100 font-display italic text-sm md:text-base tracking-wide" aria-hidden={rep === 1}>
-                {MARQUEE_KEYS.map((key) => (
-                  <span key={key} className="flex items-center gap-3">
-                    <span>{t(`modules.${key}.name`)}</span>
+                     {categories.map((cat) => (
+                  <span key={cat.slug} className="flex items-center gap-3">
+                    <span>{categoryName(cat, i18n.language)}</span>
                     <span className="text-red-500 not-italic">✦</span>
                   </span>
                 ))}
@@ -152,9 +150,9 @@ export default function Home() {
             <p className="text-wood-600 max-w-sm leading-relaxed">{t('home.modulesSubtitle')}</p>
           </Reveal>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {MODULES.map((mod, i) => (
-              <ModuleCard key={mod.slug} module={mod} delay={i * 60} />
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {categories.map((cat, i) => (
+              <ModuleCard key={cat.slug} category={cat} delay={i * 60} />
             ))}
           </div>
 

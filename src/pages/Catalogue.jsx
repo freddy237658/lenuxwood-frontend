@@ -1,20 +1,27 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import Reveal from '../components/ui/Reveal'
+import { Loader2 } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
-import { PRODUCTS } from '../data/products'
-import { MODULES } from '../data/modules'
+import { useProducts } from '../hooks/useProducts'
+import { useCategories, categoryName } from '../hooks/useCategories'
 import { useTranslation } from 'react-i18next'
 
 export default function Catalogue() {
-  const { t } = useTranslation()
+  const { i18n } = useTranslation()
   const [searchParams] = useSearchParams()
   const initialModule = searchParams.get('module')
 
-  const [activeCategories, setActiveCategories] = useState(
-    initialModule ? [initialModule] : MODULES.map((m) => m.slug)
-  )
+  const { products, loading: productsLoading, error: productsError } = useProducts()
+  const { categories, loading: categoriesLoading } = useCategories()
+
+  const [activeCategories, setActiveCategories] = useState(initialModule ? [initialModule] : null)
   const [sort, setSort] = useState('popularite')
+
+  useEffect(() => {
+    if (!categoriesLoading && activeCategories === null) {
+      setActiveCategories(categories.map((c) => c.slug))
+    }
+  }, [categoriesLoading, categories, activeCategories])
 
   useEffect(() => {
     if (initialModule) {
@@ -25,19 +32,22 @@ export default function Catalogue() {
 
   const toggleCategory = (slug) => {
     setActiveCategories((prev) =>
-      prev.includes(slug) ? prev.filter((c) => c !== slug) : [...prev, slug]
+      (prev || []).includes(slug) ? prev.filter((c) => c !== slug) : [...(prev || []), slug]
     )
   }
 
   const filtered = useMemo(() => {
-    let list = PRODUCTS.filter((p) => activeCategories.includes(p.category))
+    if (!activeCategories) return []
+    let list = products.filter((p) => activeCategories.includes(p.category?.slug))
     if (sort === 'prix-asc') {
-      list = [...list].sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+      list = [...list].sort((a, b) => a.price - b.price)
     } else if (sort === 'prix-desc') {
-      list = [...list].sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
+      list = [...list].sort((a, b) => b.price - a.price)
     }
     return list
-  }, [activeCategories, sort])
+  }, [products, activeCategories, sort])
+
+  const loading = productsLoading || categoriesLoading
 
   return (
     <section className="bg-cream-50 py-14 md:py-20">
@@ -50,15 +60,15 @@ export default function Catalogue() {
               <div className="mb-7">
                 <p className="font-display font-semibold text-wood-950 mb-3">Catégorie</p>
                 <div className="flex flex-col gap-2 text-sm text-wood-600">
-                  {MODULES.map((mod) => (
-                    <label key={mod.slug} className="flex items-center gap-2 cursor-pointer">
+                  {categories.map((cat) => (
+                    <label key={cat.slug} className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={activeCategories.includes(mod.slug)}
-                        onChange={() => toggleCategory(mod.slug)}
+                        checked={(activeCategories || []).includes(cat.slug)}
+                        onChange={() => toggleCategory(cat.slug)}
                         className="accent-wood-950"
                       />
-                      {t(`modules.${mod.key}.name`)}
+                      {categoryName(cat, i18n.language)}
                     </label>
                   ))}
                 </div>
@@ -82,7 +92,9 @@ export default function Catalogue() {
               <div>
                 <p className="text-xs text-wood-500 mb-2">Accueil / Catalogue</p>
                 <h1 className="font-display text-3xl md:text-4xl font-semibold text-wood-950">Tout le catalogue LenuxWood</h1>
-                <p className="text-wood-500 text-sm mt-2">{filtered.length} produits disponibles</p>
+                <p className="text-wood-500 text-sm mt-2">
+                  {loading ? 'Chargement...' : `${filtered.length} produits disponibles`}
+                </p>
               </div>
               <select
                 value={sort}
@@ -95,7 +107,15 @@ export default function Catalogue() {
               </select>
             </div>
 
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="flex items-center gap-2 text-wood-500 py-10">
+                <Loader2 size={18} className="animate-spin" /> Chargement du catalogue...
+              </div>
+            ) : productsError ? (
+              <p className="text-red-600">
+                Impossible de charger le catalogue pour le moment. Réessayez dans un instant.
+              </p>
+            ) : filtered.length === 0 ? (
               <p className="text-wood-500">Aucun produit ne correspond à ces filtres.</p>
             ) : (
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">

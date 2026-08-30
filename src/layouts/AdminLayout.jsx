@@ -77,7 +77,7 @@ export default function AdminLayout() {
             Voir le site
           </Link>
           <button
-            onClick={logout}
+           onClick={async () => { await logout(); navigate('/') }}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-full text-sm font-medium text-wood-300 hover:bg-wood-900 hover:text-cream-100 transition"
           >
             <LogOut size={17} />

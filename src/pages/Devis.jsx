@@ -1,14 +1,15 @@
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useState } from 'react'
-import { UploadCloud, CheckCircle2 } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { UploadCloud, CheckCircle2, Loader2, FileCheck } from 'lucide-react'
 import ModuleIcon from '../components/ui/ModuleIcon'
-import { MODULES } from '../data/modules'
+import { useCategories, categoryName } from '../hooks/useCategories'
 import { useTranslation } from 'react-i18next'
+import api from '../lib/api'
 
 const schema = z.object({
-  module: z.string().min(1, 'Choisissez un module'),
+  category_id: z.string().min(1, 'Choisissez un module'),
   description: z.string().min(10, 'Décrivez votre besoin (10 caractères minimum)'),
   dimensions: z.string().optional(),
   budget: z.string().optional(),
@@ -19,8 +20,13 @@ const schema = z.object({
 })
 
 export default function Devis() {
-  const { t } = useTranslation()
+  const { i18n } = useTranslation()
+  const { categories } = useCategories()
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [attachment, setAttachment] = useState(null)
+  const fileInputRef = useRef(null)
+
   const {
     register,
     handleSubmit,
@@ -29,10 +35,24 @@ export default function Devis() {
   } = useForm({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data) => {
-    // TODO: brancher sur l'API Laravel (POST /api/devis)
-    await new Promise((r) => setTimeout(r, 700))
-    console.log('Demande de devis', data)
-    setSubmitted(true)
+    setSubmitError('')
+
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) formData.append(key, value)
+    })
+    if (attachment) {
+      formData.append('attachment', attachment)
+    }
+
+    try {
+      await api.post('/quotes', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      setSubmitted(true)
+    } catch {
+      setSubmitError("Une erreur est survenue lors de l'envoi. Vérifiez vos informations et réessayez.")
+    }
   }
 
   if (submitted) {
@@ -63,34 +83,34 @@ export default function Devis() {
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-wood-700/10 rounded-sm p-6 md:p-10">
           <p className="font-display font-semibold text-xl text-wood-950 mb-6">1. Quel module vous intéresse ?</p>
           <Controller
-            name="module"
+            name="category_id"
             control={control}
             defaultValue=""
             render={({ field }) => (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2">
-                {MODULES.map((mod) => (
+                {categories.map((cat) => (
                   <label
-                    key={mod.slug}
+                    key={cat.slug}
                     className={`border rounded-sm p-4 text-center cursor-pointer transition flex flex-col items-center gap-2 ${
-                      field.value === mod.slug ? 'border-red-600 bg-red-600/5' : 'border-wood-700/20 hover:border-red-600'
+                      field.value === String(cat.id) ? 'border-red-600 bg-red-600/5' : 'border-wood-700/20 hover:border-red-600'
                     }`}
                   >
                     <input
                       type="radio"
                       className="hidden"
-                      checked={field.value === mod.slug}
-                      onChange={() => field.onChange(mod.slug)}
+                      checked={field.value === String(cat.id)}
+                      onChange={() => field.onChange(String(cat.id))}
                     />
                     <div className="w-8 h-8 flex items-center justify-center text-wood-700">
-                      <ModuleIcon name={mod.icon} size={28} />
+                      <ModuleIcon name={cat.icon} size={28} />
                     </div>
-                    <span className="text-xs font-medium text-wood-800">{t(`modules.${mod.key}.name`)}</span>
+                    <span className="text-xs font-medium text-wood-800">{categoryName(cat, i18n.language)}</span>
                   </label>
                 ))}
               </div>
             )}
           />
-          {errors.module && <p className="text-xs text-red-600 mb-6">{errors.module.message}</p>}
+          {errors.category_id && <p className="text-xs text-red-600 mb-6">{errors.category_id.message}</p>}
 
           <p className="font-display font-semibold text-xl text-wood-950 mb-6 mt-10">2. Détails du projet</p>
           <div className="grid md:grid-cols-2 gap-5 mb-10">
@@ -124,9 +144,28 @@ export default function Devis() {
             </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-wood-800 mb-1.5 block">Photo ou plan (optionnel)</label>
-              <div className="border-2 border-dashed border-wood-700/25 rounded-sm py-8 text-center text-sm text-wood-500 cursor-pointer hover:border-red-600 transition">
-                <UploadCloud className="mx-auto mb-2 text-wood-400" size={28} />
-                Glissez un fichier ou cliquez pour parcourir
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={(e) => setAttachment(e.target.files?.[0] || null)}
+              />
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed border-wood-700/25 rounded-sm py-8 text-center text-sm text-wood-500 cursor-pointer hover:border-red-600 transition"
+              >
+                {attachment ? (
+                  <>
+                    <FileCheck className="mx-auto mb-2 text-red-600" size={28} />
+                    {attachment.name}
+                  </>
+                ) : (
+                  <>
+                    <UploadCloud className="mx-auto mb-2 text-wood-400" size={28} />
+                    Cliquez pour choisir un fichier (JPG, PNG ou PDF, 5 Mo max)
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -175,11 +214,14 @@ export default function Devis() {
             </div>
           </div>
 
+          {submitError && <p className="text-sm text-red-600 mb-4">{submitError}</p>}
+
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary w-full md:w-auto px-10 py-4 rounded-sm font-semibold disabled:opacity-60"
+            className="btn-primary w-full md:w-auto px-10 py-4 rounded-sm font-semibold disabled:opacity-60 inline-flex items-center justify-center gap-2"
           >
+            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
             {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande de devis'}
           </button>
         </form>

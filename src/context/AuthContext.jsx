@@ -1,89 +1,55 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-
-/**
- * ⚠️ AUTHENTIFICATION FACTICE (MOCK)
- * ----------------------------------
- * Ce contexte simule une authentification en attendant le back-end Laravel.
- * Toute la logique ci-dessous (localStorage, détection de rôle par email...)
- * devra être remplacée par de vrais appels à l'API Laravel Sanctum :
- *   - POST /api/login          -> retourne un token + l'utilisateur
- *   - POST /api/register       -> crée le compte
- *   - POST /api/logout         -> invalide le token
- *   - GET  /api/user           -> utilisateur courant (via token en cookie/header)
- *
- * Le rôle admin est ici déterminé par un heuristique simple (email contenant
- * "admin") uniquement pour pouvoir démontrer le panel admin sans back-end.
- * Cette logique DOIT être supprimée une fois l'API branchée : le rôle doit
- * venir du back-end, jamais être déduit côté client.
- */
+import api from '../lib/api'
 
 const AuthContext = createContext(null)
-const STORAGE_KEY = 'lenuxwood_user'
-
-function fakeDelay(ms = 600) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
+const TOKEN_KEY = 'lenuxwood_token'
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored))
-      } catch {
-        localStorage.removeItem(STORAGE_KEY)
-      }
+    const token = localStorage.getItem(TOKEN_KEY)
+    if (!token) {
+      setLoading(false)
+      return
     }
-    setLoading(false)
+
+    api
+      .get('/me')
+      .then((res) => setUser(res.data))
+      .catch(() => localStorage.removeItem(TOKEN_KEY))
+      .finally(() => setLoading(false))
   }, [])
 
-  const persist = (nextUser) => {
-    setUser(nextUser)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
-  }
-
-  // TODO: remplacer par POST /api/login (Laravel Sanctum)
   const login = async ({ email, password }) => {
-    await fakeDelay()
-    if (!email || !password) {
-      throw new Error('Identifiants invalides')
-    }
-    const role = email.toLowerCase().includes('admin') ? 'admin' : 'client'
-    const nextUser = {
-      name: email.split('@')[0],
-      email,
-      role,
-    }
-    persist(nextUser)
-    return nextUser
+    const res = await api.post('/login', { email, password })
+    localStorage.setItem(TOKEN_KEY, res.data.token)
+    setUser(res.data.user)
+    return res.data.user
   }
 
-  // TODO: remplacer par POST /api/register (Laravel Sanctum)
   const register = async ({ name, email, phone, password }) => {
-    await fakeDelay()
-    if (!name || !email || !password) {
-      throw new Error('Champs manquants')
+    const res = await api.post('/register', { name, email, phone, password })
+    localStorage.setItem(TOKEN_KEY, res.data.token)
+    setUser(res.data.user)
+    return res.data.user
+  }
+
+  const logout = async () => {
+    try {
+      await api.post('/logout')
+    } catch {
+      // le token est peut-être déjà expiré côté serveur, on nettoie quand même localement
     }
-    const role = email.toLowerCase().includes('admin') ? 'admin' : 'client'
-    const nextUser = { name, email, phone, role }
-    persist(nextUser)
-    return nextUser
-  }
-
-  const logout = () => {
+    localStorage.removeItem(TOKEN_KEY)
     setUser(null)
-    localStorage.removeItem(STORAGE_KEY)
   }
 
-  // TODO: remplacer par PUT `${VITE_API_URL}/user/profile`
   const updateProfile = async (data) => {
-    await fakeDelay(400)
-    const nextUser = { ...user, ...data }
-    persist(nextUser)
-    return nextUser
+    const res = await api.put('/me/profile', data)
+    setUser(res.data)
+    return res.data
   }
 
   const value = {
@@ -102,6 +68,6 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth doit être utilisé à l\'intérieur de <AuthProvider>')
+  if (!ctx) throw new Error("useAuth doit être utilisé à l'intérieur de <AuthProvider>")
   return ctx
 }
