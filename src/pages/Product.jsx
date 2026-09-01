@@ -1,13 +1,11 @@
-import { useState } from 'react'
-import { useParams, Link, Navigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { ShieldCheck, Loader2 } from 'lucide-react'
+import { ShieldCheck, Loader2, Check } from 'lucide-react'
 import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
 import ProductCard from '../components/ProductCard'
 import { useProduct, useProducts } from '../hooks/useProducts'
 import { categoryName } from '../hooks/useCategories'
 import { formatPrice } from '../lib/format'
+import { useCart } from '../context/CartContext'
 
 const FALLBACK_COLOR = '#6B4426'
 
@@ -17,6 +15,14 @@ export default function Product() {
   const { product, loading, error } = useProduct(slug)
   const { products: allProducts } = useProducts()
   const [activeImage, setActiveImage] = useState(0)
+  const { addItem } = useCart()
+  const [added, setAdded] = useState(false)
+
+  const handleAddToCart = () => {
+    addItem(product, 1)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
 
   if (loading) {
     return (
@@ -111,7 +117,15 @@ export default function Product() {
               <Button to="/devis" className="flex-1 justify-center">
                 Demander un devis pour ce modèle
               </Button>
-              <Button variant="outline">Ajouter au panier</Button>
+                <Button variant="outline" onClick={handleAddToCart}>
+                {added ? (
+                  <>
+                    <Check size={16} /> Ajouté
+                  </>
+                ) : (
+                  'Ajouter au panier'
+                )}
+              </Button>
             </div>
             <p className="text-xs text-wood-500 flex items-center gap-2">
               <ShieldCheck size={14} /> Paiement sécurisé via Orange Money et MTN MoMo

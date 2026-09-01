@@ -7,17 +7,20 @@ import {
   ShoppingCart,
   Wallet,
   Users,
+  Image,
   MessageCircle,
   LogOut,
   ExternalLink,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { CONVERSATIONS } from '../data/messages-mock'
+import api from '../lib/api'
 import logo from '../assets/logo.jpg'
+import { useEffect, useState } from 'react'
 
 const NAV = [
   { to: '/admin', label: 'Tableau de bord', icon: LayoutDashboard, end: true },
   { to: '/admin/produits', label: 'Produits', icon: Package },
+    { to: '/admin/realisations', label: 'Réalisations', icon: Image },
   { to: '/admin/categories', label: 'Catégories', icon: LayersIcon },
   { to: '/admin/devis', label: 'Devis', icon: ClipboardList },
   { to: '/admin/commandes', label: 'Commandes', icon: ShoppingCart },
@@ -28,7 +31,17 @@ const NAV = [
 
 export default function AdminLayout() {
   const { user, logout } = useAuth()
-  const unreadMessages = CONVERSATIONS.reduce((sum, c) => sum + c.unread, 0)
+  const [unreadMessages, setUnreadMessages] = useState(0)
+
+  useEffect(() => {
+    api
+      .get('/conversations')
+      .then((res) => {
+        const total = (res.data.data ?? []).reduce((sum, c) => sum + c.unread_count, 0)
+        setUnreadMessages(total)
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="min-h-screen bg-cream-100 flex">

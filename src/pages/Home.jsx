@@ -4,6 +4,7 @@ import { ArrowRight, Check, Ruler, Smartphone, Truck } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Reveal from '../components/ui/Reveal'
 import ModuleCard from '../components/ModuleCard'
+import { useRealisations } from '../hooks/useRealisations'
 import { useCategories, categoryName } from '../hooks/useCategories'
 function Counter({ target, suffix = '' }) {
   const [value, setValue] = useState(0)
@@ -50,6 +51,8 @@ const FEATURES = [
 export default function Home() {
   const { t, i18n } = useTranslation()
   const { categories } = useCategories()
+  const { realisations } = useRealisations()
+  const featured = realisations.slice(0, 5)
 
   return (
     <>
@@ -97,28 +100,19 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <Reveal delay={150}>
-            <div className="relative">
-              <div className="absolute -top-6 -right-6 w-24 h-24 md:w-32 md:h-32 bg-oak-500/25 rounded-full blur-2xl" />
-              <div className="relative aspect-[4/5] md:aspect-[5/6] rounded-sm overflow-hidden corner-cut">
-                <div className="absolute inset-0 bg-wood-800 grain-bg flex items-center justify-center">
-                  <svg width="64%" height="64%" viewBox="0 0 200 200" fill="none" className="opacity-90">
-                    <rect x="20" y="120" width="160" height="14" rx="2" fill="#D3A868" />
-                    <rect x="30" y="60" width="30" height="74" rx="2" fill="#A97A48" />
-                    <rect x="70" y="80" width="30" height="54" rx="2" fill="#8A5C34" />
-                    <rect x="110" y="45" width="30" height="89" rx="2" fill="#A97A48" />
-                    <rect x="150" y="95" width="20" height="39" rx="2" fill="#6B4426" />
-                  </svg>
+            <Reveal delay={100} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {featured.map((item, i) => (
+              <div
+                key={item.id}
+                className={`gallery-item aspect-square rounded-sm overflow-hidden relative ${i === 0 ? 'col-span-2 row-span-2' : ''}`}
+              >
+                <img src={item.image_url} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-wood-950/90 to-transparent">
+                  <p className={`text-cream-100 font-display font-semibold ${i === 0 ? 'text-xl' : 'text-sm'}`}>{item.title}</p>
+                  {item.city && <p className="text-oak-400 text-xs mt-1 tracking-wide">{item.city}</p>}
                 </div>
-                <div className="absolute bottom-0 right-0 w-2/3 h-1/3 bg-red-700" />
               </div>
-              <div className="absolute -bottom-6 -left-4 md:-left-8 bg-cream-50 border border-wood-700/10 shadow-xl rounded-sm px-5 py-4 max-w-[220px]">
-                <p className="font-display text-sm italic text-wood-700 leading-snug">
-                  « Les meubles les plus solides que j'ai commandés. »
-                </p>
-                <p className="text-[11px] text-wood-500 mt-2 font-semibold tracking-wide">— Client, Douala</p>
-              </div>
-            </div>
+            ))}
           </Reveal>
         </div>
 

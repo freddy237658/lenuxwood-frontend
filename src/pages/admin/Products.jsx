@@ -1,42 +1,61 @@
-import { useMemo, useState } from 'react'
-import { Plus, X, Package, Layers, Wallet, ImagePlus, Search } from 'lucide-react'
-import { PRODUCTS as INITIAL_PRODUCTS } from '../../data/products'
-import { MODULES } from '../../data/modules'
+import { useEffect, useMemo, useState } from 'react'
+import { Plus, X, Package, Layers, Wallet, ImagePlus, Search, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import api from '../../lib/api'
+import { useCategories, categoryName } from '../../hooks/useCategories'
+import { formatPrice } from '../../lib/format'
 import StatCard from '../../components/admin/StatCard'
 import RowActions from '../../components/admin/RowActions'
 import DetailModal from '../../components/admin/DetailModal'
 
 const emptyForm = {
+  category_id: '',
   name: '',
-  category: 'meubles-cuisine',
   price: '',
+  price_unit: '',
   essence: '',
   finish: '',
   dimensions: '',
-  delay: '',
+  manufacturing_delay: '',
   warranty: '',
   stock: '',
   tag: '',
   description: '',
-  image: null,
+  imageFile: null,
+  imagePreview: null,
 }
 
 export default function Products() {
-  const { t } = useTranslation()
-  // TODO: remplacer par un state alimenté par GET/POST/PUT/DELETE `${VITE_API_URL}/products`
-  const [products, setProducts] = useState(INITIAL_PRODUCTS)
+  const { i18n } = useTranslation()
+  const { categories } = useCategories()
+
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [viewing, setViewing] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
+
+  const load = () => {
+    setLoading(true)
+    api
+      .get('/products')
+      .then((res) => setProducts(res.data.data ?? []))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(load, [])
 
   const filtered = useMemo(() => {
     if (!query.trim()) return products
     const q = query.toLowerCase()
     return products.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.categoryLabel.toLowerCase().includes(q) || (p.essence || '').toLowerCase().includes(q)
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        (p.category?.name?.fr || '').toLowerCase().includes(q) ||
+        (p.essence || '').toLowerCase().includes(q)
     )
   }, [products, query])
 
@@ -49,67 +68,80 @@ export default function Products() {
   const openEdit = (product) => {
     setEditingId(product.id)
     setForm({
+      category_id: String(product.category?.id || ''),
       name: product.name,
-      category: product.category,
       price: product.price,
+      price_unit: product.price_unit || '',
       essence: product.essence || '',
       finish: product.finish || '',
       dimensions: product.dimensions || '',
-      delay: product.delay || '',
+      manufacturing_delay: product.manufacturing_delay || '',
       warranty: product.warranty || '',
       stock: product.stock || '',
       tag: product.tag || '',
       description: product.description || '',
-      image: product.image || null,
+      imageFile: null,
+      imagePreview: product.images?.[0]?.url || null,
     })
     setModalOpen(true)
   }
 
-  const remove = (id) => {
-    if (confirm('Supprimer ce produit ?')) {
-      setProducts((prev) => prev.filter((p) => p.id !== id))
-    }
+  const remove = async (id) => {
+    if (!confirm('Supprimer ce produit ?')) return
+    await api.delete(`/products/${id}`)
+    load()
   }
 
   const onImageChange = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => setForm((f) => ({ ...f, image: reader.result }))
-    reader.readAsDataURL(file)
+    setForm((f) => ({ ...f, imageFile: file, imagePreview: URL.createObjectURL(file) }))
   }
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    const mod = MODULES.find((m) => m.slug === form.category)
-    const label = mod ? t(`modules.${mod.key}.name`) : form.category
+    setSaving(true)
 
-    if (editingId) {
-      setProducts((prev) => prev.map((p) => (p.id === editingId ? { ...p, ...form, categoryLabel: label } : p)))
-    } else {
-      const newProduct = {
-        id: Date.now(),
-        slug: form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        color: '#6B4426',
-        categoryLabel: label,
-        ...form,
+    const formData = new FormData()
+    formData.append('category_id', form.category_id)
+    formData.append('name', form.name)
+    formData.append('price', form.price)
+    if (form.price_unit) formData.append('price_unit', form.price_unit)
+    if (form.essence) formData.append('essence', form.essence)
+    if (form.finish) formData.append('finish', form.finish)
+    if (form.dimensions) formData.append('dimensions', form.dimensions)
+    if (form.manufacturing_delay) formData.append('manufacturing_delay', form.manufacturing_delay)
+    if (form.warranty) formData.append('warranty', form.warranty)
+    if (form.stock) formData.append('stock', form.stock)
+    if (form.tag) formData.append('tag', form.tag)
+    if (form.description) formData.append('description', form.description)
+    if (form.imageFile) formData.append('image', form.imageFile)
+
+    try {
+      if (editingId) {
+        await api.post(`/products/${editingId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+      } else {
+        await api.post('/products', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
       }
-      setProducts((prev) => [newProduct, ...prev])
+      setModalOpen(false)
+      load()
+    } finally {
+      setSaving(false)
     }
-    setModalOpen(false)
   }
+
+  const avgPrice = products.length
+    ? Math.round(products.reduce((sum, p) => sum + Number(p.price), 0) / products.length)
+    : 0
 
   const stats = [
     { label: 'Produits au catalogue', value: products.length, icon: Package, tone: 'dark' },
-    { label: 'Catégories actives', value: MODULES.length, icon: Layers, tone: 'dark' },
-    {
-      label: 'Prix moyen (indicatif)',
-      value: `${Math.round(
-        products.reduce((sum, p) => sum + (parseInt(String(p.price).replace(/[^\d]/g, ''), 10) || 0), 0) / (products.length || 1)
-      ).toLocaleString('fr-FR')} FCFA`,
-      icon: Wallet,
-      tone: 'red',
-    },
+    { label: 'Catégories actives', value: categories.length, icon: Layers, tone: 'dark' },
+    { label: 'Prix moyen (indicatif)', value: `${formatPrice(avgPrice)} FCFA`, icon: Wallet, tone: 'red' },
   ]
 
   return (
@@ -141,60 +173,66 @@ export default function Products() {
         />
       </div>
 
-      <div className="bg-white border border-wood-700/10 rounded-2xl overflow-hidden overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-cream-100 text-left text-wood-500 text-xs uppercase tracking-wide">
-              <th className="px-5 py-3 font-medium">Produit</th>
-              <th className="px-5 py-3 font-medium">Catégorie</th>
-              <th className="px-5 py-3 font-medium">Prix</th>
-              <th className="px-5 py-3 font-medium">Essence</th>
-              <th className="px-5 py-3 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((p) => (
-              <tr key={p.id} className="border-t border-wood-700/10">
-                <td className="px-5 py-3.5">
-                  <div className="flex items-center gap-3">
-                    {p.image ? (
-                      <img src={p.image} alt={p.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full shrink-0" style={{ backgroundColor: p.color }} />
-                    )}
-                    <span className="font-medium text-wood-900">{p.name}</span>
-                  </div>
-                </td>
-                <td className="px-5 py-3.5 text-wood-600">{p.categoryLabel}</td>
-                <td className="px-5 py-3.5 text-wood-600">{p.price} FCFA</td>
-                <td className="px-5 py-3.5 text-wood-600">{p.essence}</td>
-                <td className="px-5 py-3.5">
-                  <RowActions onView={() => setViewing(p)} onEdit={() => openEdit(p)} onDelete={() => remove(p.id)} />
-                </td>
+      {loading ? (
+        <div className="flex items-center gap-2 text-wood-500 py-10">
+          <Loader2 size={18} className="animate-spin" /> Chargement...
+        </div>
+      ) : (
+        <div className="bg-white border border-wood-700/10 rounded-2xl overflow-hidden overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-cream-100 text-left text-wood-500 text-xs uppercase tracking-wide">
+                <th className="px-5 py-3 font-medium">Produit</th>
+                <th className="px-5 py-3 font-medium">Catégorie</th>
+                <th className="px-5 py-3 font-medium">Prix</th>
+                <th className="px-5 py-3 font-medium">Essence</th>
+                <th className="px-5 py-3 font-medium text-right">Actions</th>
               </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-5 py-8 text-center text-wood-400">
-                  Aucun produit ne correspond à cette recherche.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filtered.map((p) => (
+                <tr key={p.id} className="border-t border-wood-700/10">
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      {p.images?.[0]?.url ? (
+                        <img src={p.images[0].url} alt={p.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full shrink-0 bg-wood-700" />
+                      )}
+                      <span className="font-medium text-wood-900">{p.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3.5 text-wood-600">{p.category ? categoryName(p.category, i18n.language) : ''}</td>
+                  <td className="px-5 py-3.5 text-wood-600">{formatPrice(p.price, p.price_unit)} FCFA</td>
+                  <td className="px-5 py-3.5 text-wood-600">{p.essence}</td>
+                  <td className="px-5 py-3.5">
+                    <RowActions onView={() => setViewing(p)} onEdit={() => openEdit(p)} onDelete={() => remove(p.id)} />
+                  </td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8 text-center text-wood-400">
+                    Aucun produit ne correspond à cette recherche.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {viewing && (
         <DetailModal
           title={viewing.name}
           onClose={() => setViewing(null)}
           fields={[
-            { label: 'Catégorie', value: viewing.categoryLabel },
-            { label: 'Prix', value: `${viewing.price} FCFA` },
+            { label: 'Catégorie', value: viewing.category ? categoryName(viewing.category, i18n.language) : '' },
+            { label: 'Prix', value: `${formatPrice(viewing.price, viewing.price_unit)} FCFA` },
             { label: 'Essence', value: viewing.essence },
             { label: 'Finition', value: viewing.finish },
             { label: 'Dimensions', value: viewing.dimensions },
-            { label: 'Délai de fabrication', value: viewing.delay },
+            { label: 'Délai de fabrication', value: viewing.manufacturing_delay },
             { label: 'Garantie', value: viewing.warranty },
             { label: 'Stock', value: viewing.stock },
             { label: 'Description', value: viewing.description },
@@ -219,8 +257,8 @@ export default function Products() {
                 <label className="text-sm font-medium text-wood-800 mb-1.5 block">Image du produit</label>
                 <label className="flex items-center gap-4 cursor-pointer">
                   <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-wood-700/25 flex items-center justify-center overflow-hidden shrink-0 hover:border-red-600 transition">
-                    {form.image ? (
-                      <img src={form.image} alt="Aperçu" className="w-full h-full object-cover" />
+                    {form.imagePreview ? (
+                      <img src={form.imagePreview} alt="Aperçu" className="w-full h-full object-cover" />
                     ) : (
                       <ImagePlus size={22} className="text-wood-400" />
                     )}
@@ -258,13 +296,15 @@ export default function Products() {
               <div>
                 <label className="text-sm font-medium text-wood-800 mb-1.5 block">Catégorie</label>
                 <select
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  required
+                  value={form.category_id}
+                  onChange={(e) => setForm({ ...form, category_id: e.target.value })}
                   className="w-full border border-wood-700/20 rounded-sm px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-red-600"
                 >
-                  {MODULES.map((m) => (
-                    <option key={m.slug} value={m.slug}>
-                      {t(`modules.${m.key}.name`)}
+                  <option value="">Choisir...</option>
+                  {categories.map((c) => (
+                    <option key={c.slug} value={c.id}>
+                      {categoryName(c, i18n.language)}
                     </option>
                   ))}
                 </select>
@@ -275,9 +315,19 @@ export default function Products() {
                   <label className="text-sm font-medium text-wood-800 mb-1.5 block">Prix (FCFA)</label>
                   <input
                     required
-                    type="text"
+                    type="number"
                     value={form.price}
                     onChange={(e) => setForm({ ...form, price: e.target.value })}
+                    className="w-full border border-wood-700/20 rounded-sm px-4 py-2.5 text-sm focus:outline-none focus:border-red-600"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-wood-800 mb-1.5 block">Unité (optionnel)</label>
+                  <input
+                    type="text"
+                    value={form.price_unit}
+                    onChange={(e) => setForm({ ...form, price_unit: e.target.value })}
+                    placeholder="Ex: /m²"
                     className="w-full border border-wood-700/20 rounded-sm px-4 py-2.5 text-sm focus:outline-none focus:border-red-600"
                   />
                 </div>
@@ -323,8 +373,8 @@ export default function Products() {
                   <label className="text-sm font-medium text-wood-800 mb-1.5 block">Délai de fabrication</label>
                   <input
                     type="text"
-                    value={form.delay}
-                    onChange={(e) => setForm({ ...form, delay: e.target.value })}
+                    value={form.manufacturing_delay}
+                    onChange={(e) => setForm({ ...form, manufacturing_delay: e.target.value })}
                     className="w-full border border-wood-700/20 rounded-sm px-4 py-2.5 text-sm focus:outline-none focus:border-red-600"
                   />
                 </div>
@@ -354,7 +404,12 @@ export default function Products() {
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-outline flex-1 justify-center py-3 rounded-full font-semibold">
                   Annuler
                 </button>
-                <button type="submit" className="btn-primary flex-1 justify-center py-3 rounded-full font-semibold">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="btn-primary flex-1 justify-center py-3 rounded-full font-semibold disabled:opacity-60 inline-flex items-center gap-2"
+                >
+                  {saving && <Loader2 size={15} className="animate-spin" />}
                   {editingId ? 'Enregistrer' : 'Ajouter'}
                 </button>
               </div>

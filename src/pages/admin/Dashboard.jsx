@@ -1,47 +1,59 @@
-import { Package, ClipboardList, ShoppingCart, Wallet, TrendingUp, ArrowUpRight, MessageCircle } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Package, ClipboardList, ShoppingCart, Wallet, TrendingUp, ArrowUpRight, Loader2, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { QUOTES, ORDERS } from '../../data/admin-mock'
-import { CONVERSATIONS } from '../../data/messages-mock'
-import { PRODUCTS } from '../../data/products'
+import api from '../../lib/api'
+import { formatPrice } from '../../lib/format'
 import StatCard from '../../components/admin/StatCard'
 import StatusBadge from '../../components/admin/StatusBadge'
 
-const STATS = [
-  { label: 'Produits au catalogue', value: PRODUCTS.length, icon: Package, tone: 'dark' },
-  { label: 'Devis en attente', value: QUOTES.filter((q) => q.status === 'En attente').length, icon: ClipboardList, tone: 'red' },
-  { label: 'Commandes en cours', value: ORDERS.filter((o) => o.status !== 'Livré').length, icon: ShoppingCart, tone: 'dark' },
-  { label: "Chiffre d'affaires (mois)", value: '2 425 000 FCFA', icon: Wallet, tone: 'dark' },
-]
-
-// Données de démo pour le mini-graphique de tendance (à remplacer par une vraie
-// agrégation Laravel une fois le back-end branché : GET /api/admin/stats/revenue)
-const TREND = [38, 52, 41, 66, 58, 72, 64, 80, 71, 90, 84, 96]
+const QUOTE_STATUS_LABELS = { pending: 'En attente', processed: 'Traité', refused: 'Refusé' }
+const ORDER_STATUS_LABELS = { quote_validated: 'Devis validé', in_production: 'En fabrication', delivered: 'Livré' }
 
 export default function Dashboard() {
-  const unreadMessages = CONVERSATIONS.reduce((sum, c) => sum + c.unread, 0)
-  const maxTrend = Math.max(...TREND)
+  const [stats, setStats] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    api
+      .get('/admin/stats')
+      .then((res) => setStats(res.data))
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 text-wood-500 py-10">
+        <Loader2 size={18} className="animate-spin" /> Chargement du tableau de bord...
+      </div>
+    )
+  }
+
+  if (!stats) {
+    return <p className="text-red-600">Impossible de charger les statistiques pour le moment.</p>
+  }
+
+  const cards = [
+    { label: 'Produits au catalogue', value: stats.products_count, icon: Package, tone: 'dark' },
+    { label: 'Devis en attente', value: stats.pending_quotes_count, icon: ClipboardList, tone: 'red' },
+    { label: 'Commandes en cours', value: stats.orders_in_progress_count, icon: ShoppingCart, tone: 'dark' },
+    { label: "Chiffre d'affaires (mois)", value: `${formatPrice(stats.month_revenue)} FCFA`, icon: Wallet, tone: 'dark' },
+    { label: 'Visiteurs ce mois-ci', value: stats.visits_this_month, icon: Users, tone: 'red' },
+  ]
+
+  const trend = stats.weekly_revenue_trend || []
+  const maxTrend = Math.max(...trend, 1)
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-        <div>
-          <h1 className="font-display text-2xl md:text-3xl font-semibold text-wood-950 mb-1">Tableau de bord</h1>
-          <p className="text-wood-500 text-sm">Vue d'ensemble de l'activité LenuxWood</p>
-        </div>
-        {unreadMessages > 0 && (
-          <Link
-            to="/admin/messagerie"
-            className="inline-flex items-center gap-2 bg-red-600/10 text-red-700 text-sm font-medium px-4 py-2.5 rounded-full hover:bg-red-600/15 transition"
-          >
-            <MessageCircle size={16} />
-            {unreadMessages} nouveau{unreadMessages > 1 ? 'x' : ''} message{unreadMessages > 1 ? 's' : ''}
-          </Link>
-        )}
+      <div className="mb-8">
+        <h1 className="font-display text-2xl md:text-3xl font-semibold text-wood-950 mb-1">Tableau de bord</h1>
+        <p className="text-wood-500 text-sm">Vue d'ensemble de l'activité LenuxWood</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
-        {STATS.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
+      
+      <div className="grid sm:grid-cols-2 xl:grid-cols-5 gap-5 mb-6">
+        {cards.map((c) => (
+          <StatCard key={c.label} {...c} />
         ))}
       </div>
 
@@ -53,15 +65,15 @@ export default function Dashboard() {
               <p className="text-xs text-wood-500 mt-0.5">12 dernières semaines</p>
             </div>
             <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-700/10 px-2.5 py-1 rounded-full">
-              <TrendingUp size={13} /> +18%
+              <TrendingUp size={13} /> Paiements confirmés
             </span>
           </div>
           <div className="flex items-end gap-2 h-40">
-            {TREND.map((v, i) => (
+            {trend.map((v, i) => (
               <div key={i} className="flex-1 flex flex-col justify-end h-full group">
                 <div
                   className="w-full rounded-full bg-wood-950 group-hover:bg-red-600 transition-colors"
-                  style={{ height: `${(v / maxTrend) * 100}%` }}
+                  style={{ height: `${(v / maxTrend) * 100}%`, minHeight: v > 0 ? '4px' : '0' }}
                 />
               </div>
             ))}
@@ -74,9 +86,7 @@ export default function Dashboard() {
             <p className="text-xs text-wood-400">Répondez rapidement pour maximiser vos conversions.</p>
           </div>
           <div className="my-6">
-            <p className="font-display text-5xl font-semibold text-oak-400">
-              {QUOTES.filter((q) => q.status === 'En attente').length}
-            </p>
+            <p className="font-display text-5xl font-semibold text-oak-400">{stats.pending_quotes_count}</p>
             <p className="text-xs text-wood-400 mt-1">en attente de réponse</p>
           </div>
           <Link
@@ -97,15 +107,18 @@ export default function Dashboard() {
             </Link>
           </div>
           <div className="space-y-3">
-            {QUOTES.slice(0, 4).map((q) => (
+            {(stats.latest_quotes || []).map((q) => (
               <div key={q.id} className="flex items-center justify-between text-sm border-b border-wood-700/10 pb-3 last:border-0 last:pb-0">
                 <div className="min-w-0">
-                  <p className="font-medium text-wood-900 truncate">{q.client}</p>
-                  <p className="text-xs text-wood-500 truncate">{q.module} · {q.city}</p>
+                  <p className="font-medium text-wood-900 truncate">{q.name}</p>
+                  <p className="text-xs text-wood-500 truncate">
+                    {q.category} · {q.city}
+                  </p>
                 </div>
-                <StatusBadge status={q.status} />
+                <StatusBadge status={QUOTE_STATUS_LABELS[q.status] || q.status} />
               </div>
             ))}
+            {(stats.latest_quotes || []).length === 0 && <p className="text-sm text-wood-400">Aucun devis pour le moment.</p>}
           </div>
         </div>
 
@@ -117,15 +130,18 @@ export default function Dashboard() {
             </Link>
           </div>
           <div className="space-y-3">
-            {ORDERS.slice(0, 4).map((o) => (
+            {(stats.latest_orders || []).map((o) => (
               <div key={o.id} className="flex items-center justify-between text-sm border-b border-wood-700/10 pb-3 last:border-0 last:pb-0">
                 <div className="min-w-0">
                   <p className="font-medium text-wood-900 truncate">{o.product}</p>
-                  <p className="text-xs text-wood-500 truncate">{o.client} · {o.amount} FCFA</p>
+                  <p className="text-xs text-wood-500 truncate">
+                    {o.client} · {formatPrice(o.amount)} FCFA
+                  </p>
                 </div>
-                <StatusBadge status={o.status} />
+                <StatusBadge status={ORDER_STATUS_LABELS[o.status] || o.status} />
               </div>
             ))}
+            {(stats.latest_orders || []).length === 0 && <p className="text-sm text-wood-400">Aucune commande pour le moment.</p>}
           </div>
         </div>
       </div>

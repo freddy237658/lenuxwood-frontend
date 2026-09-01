@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, ArrowRight, Search, User, LogOut, LayoutDashboard } from 'lucide-react'
+import { Menu, X, ArrowRight, Search, User, LogOut, LayoutDashboard, ShoppingCart } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { useCart } from '../../context/CartContext'
 import logo from '../../assets/logo.jpg'
 
 const LINKS = [
@@ -17,6 +18,7 @@ export default function Header() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
+    const { totalCount } = useCart()
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
@@ -117,6 +119,14 @@ export default function Header() {
                 </button>
               )}
             </div>
+            <Link to="/panier" className="relative w-10 h-10 flex items-center justify-center text-wood-700 hover:text-red-600 transition" aria-label="Panier">
+              <ShoppingCart size={19} />
+              {totalCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-red-600 text-cream-50 text-[10px] font-bold flex items-center justify-center">
+                  {totalCount}
+                </span>
+              )}
+            </Link>
             <div className="hidden sm:block relative">
               {isAuthenticated ? (
                 <>
@@ -213,6 +223,9 @@ export default function Header() {
               {t('nav.quote')}
             </Link>
 
+              <Link to="/panier" onClick={() => setOpen(false)} className="flex items-center gap-2 py-2">
+                <ShoppingCart size={16} /> Panier {totalCount > 0 && `(${totalCount})`}
+              </Link>
             <div className="border-t border-wood-700/10 mt-3 pt-3">
               {isAuthenticated ? (
                 <>

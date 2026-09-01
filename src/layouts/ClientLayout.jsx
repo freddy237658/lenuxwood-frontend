@@ -1,7 +1,8 @@
 import { NavLink, Outlet, Link,useNavigate } from 'react-router-dom'
 import { ShoppingCart, ClipboardList, MessageCircle, User, LogOut, ExternalLink } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { CLIENT_CONVERSATION } from '../data/client-messages-mock'
+import { useEffect, useState } from 'react'
+import api from '../lib/api'
 import logo from '../assets/logo.jpg'
 
 
@@ -14,8 +15,16 @@ const NAV = [
 
 export default function ClientLayout() {
   const { user, logout } = useAuth()
+  const [unread, setUnread] = useState(0)
+
+  useEffect(() => {
+    api
+      .get('/me/conversation')
+      .then((res) => setUnread(res.data.data.unread_count || 0))
+      .catch(() => {})
+  }, [])
   const navigate = useNavigate()
-  const unread = CLIENT_CONVERSATION.messages.filter((m) => m.from === 'admin' && !m.read).length
+
 
   return (
     <section className="bg-cream-50 py-10 md:py-14">
