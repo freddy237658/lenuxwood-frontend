@@ -64,7 +64,13 @@ export default function Users() {
     setCreatedCredentials(null)
   }
 
-  const roleLabel = (role) => (role === 'admin' ? 'Administrateur' : 'Commercial')
+ const roleLabel = (role) => {
+  if (role === 'admin') return 'Administrateur';
+  if (role === 'commercial') return 'Commercial';
+  if (role === 'client') return 'Client';
+  return role;
+};
+
 
   const stats = useMemo(
     () => [
@@ -114,6 +120,7 @@ export default function Users() {
               <tr className="bg-cream-100 text-left text-wood-500 text-xs uppercase tracking-wide">
                 <th className="px-5 py-3 font-medium">Nom</th>
                 <th className="px-5 py-3 font-medium">Email</th>
+                <th className="px-5 py-3 font-medium">Phone</th>
                 <th className="px-5 py-3 font-medium">Rôle</th>
                 <th className="px-5 py-3 font-medium">Statut</th>
                 <th className="px-5 py-3 font-medium text-right">Actions</th>
@@ -124,6 +131,7 @@ export default function Users() {
                 <tr key={u.id} className="border-t border-wood-700/10">
                   <td className="px-5 py-3.5 font-medium text-wood-900">{u.name}</td>
                   <td className="px-5 py-3.5 text-wood-600">{u.email}</td>
+                  <td className="px-5 py-3.5 text-wood-600">{u.phone}</td>
                   <td className="px-5 py-3.5 text-wood-600">{roleLabel(u.role)}</td>
                   <td className="px-5 py-3.5">
                     <StatusBadge status={u.is_active ? 'Actif' : 'Inactif'} />
