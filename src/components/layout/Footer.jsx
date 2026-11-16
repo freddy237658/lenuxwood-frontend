@@ -21,10 +21,10 @@ export default function Footer() {
         <div>
           <p className="text-xs font-bold tracking-[0.2em] text-oak-400 mb-4">{t('footer.modules').toUpperCase()}</p>
           <ul className="space-y-2.5 text-sm text-wood-400">
-            <li><Link to="/catalogue" className="hover:text-cream-100 transition">{t('modules.charpente.name')}</Link></li>
             <li><Link to="/catalogue" className="hover:text-cream-100 transition">{t('modules.cuisine.name')}</Link></li>
             <li><Link to="/catalogue" className="hover:text-cream-100 transition">{t('modules.salon.name')}</Link></li>
             <li><Link to="/catalogue" className="hover:text-cream-100 transition">{t('modules.chambre.name')}</Link></li>
+             <li><Link to="/catalogue" className="hover:text-cream-100 transition">{t('modules.charpente.name')}</Link></li>
           </ul>
         </div>
 
@@ -42,14 +42,14 @@ export default function Footer() {
           <p className="text-xs font-bold tracking-[0.2em] text-oak-400 mb-4">{t('footer.contact').toUpperCase()}</p>
           <ul className="space-y-2.5 text-sm text-wood-400">
             <li>Douala &amp; Yaoundé, Cameroun</li>
-            <li>+237 6XX XXX XXX</li>
-            <li>contact@lenuxwood.com</li>
+            <li>+237 6 97 64 77 99</li>
+            <li>arthurmouakem35@gmail.com</li>
           </ul>
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-5 md:px-10 pt-6 border-t border-wood-800 flex flex-col md:flex-row items-center justify-between gap-3">
         <p className="text-xs text-wood-500">© {new Date().getFullYear()} LenuxWood. {t('footer.rights')}</p>
-        <p className="text-xs text-wood-500">Fait avec soin au Cameroun</p>
+        <p className="text-xs text-wood-500">Fait avec soin au Cameroun : NYA FREDDY (DEV)</p>
       </div>
     </footer>
   )

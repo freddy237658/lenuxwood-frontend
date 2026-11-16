@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Loader2, CheckCircle2 } from 'lucide-react'
+import { Loader2, CheckCircle2, UserCheck } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { formatPrice } from '../lib/format'
 import api from '../lib/api'
+import { useAuth } from '../context/AuthContext'
 
 const METHODS = [
   { id: 'orange_money', label: 'Orange Money', badge: 'OM', badgeClass: 'bg-oak-500 text-wood-950', needsPhone: true },
@@ -14,11 +15,19 @@ const METHODS = [
 export default function Checkout() {
   const { items, totalAmount, clearCart } = useCart()
   const navigate = useNavigate()
+  const { user, isAuthenticated } = useAuth()
   const [method, setMethod] = useState('orange_money')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  // Pré-remplir le téléphone si l'utilisateur est connecté
+  useEffect(() => {
+    if (isAuthenticated && user?.phone) {
+      setPhone(user.phone)
+    }
+  }, [isAuthenticated, user])
 
   const selectedMethod = METHODS.find((m) => m.id === method)
 
@@ -36,8 +45,15 @@ export default function Checkout() {
       })
       clearCart()
       setSuccess(true)
-    } catch {
-      setError('Impossible de finaliser la commande pour le moment. Réessayez.')
+    } catch (err) {
+      const msg = err?.response?.data?.message
+      setError(
+        msg
+          ? `Erreur : ${msg}`
+          : err?.response?.status
+          ? `Erreur serveur (${err.response.status}). Réessayez dans un instant.`
+          : 'Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.'
+      )
     } finally {
       setLoading(false)
     }
@@ -90,6 +106,13 @@ export default function Checkout() {
 
         <div className="bg-white border border-wood-700/10 rounded-2xl p-6 md:p-8">
           <p className="font-display font-semibold text-lg text-wood-950 mb-5">Choisissez un mode de paiement</p>
+
+          {isAuthenticated && user && (
+            <div className="mb-5 flex items-center gap-2 text-sm text-wood-700 bg-wood-950/5 border border-wood-700/15 rounded-sm px-4 py-2.5">
+              <UserCheck size={16} className="text-red-600 shrink-0" />
+              <span>Commande passée en tant que <strong>{user.name}</strong>.</span>
+            </div>
+          )}
           <div className="grid sm:grid-cols-3 gap-4 mb-6">
             {METHODS.map((m) => (
               <label

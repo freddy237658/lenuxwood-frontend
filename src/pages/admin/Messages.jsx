@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Send, Search, MessageCircle, Loader2 } from 'lucide-react'
+import { Send, Search, MessageCircle, Loader2, ArrowLeft } from 'lucide-react'
 import api from '../../lib/api'
 
 export default function Messages() {
@@ -78,15 +78,22 @@ export default function Messages() {
   const active = conversations.find((c) => c.id === activeId)
 
   return (
-    <div>
-      <h1 className="font-display text-2xl md:text-3xl font-semibold text-wood-950 mb-1">Messagerie</h1>
-      <p className="text-wood-500 text-sm mb-8">
-        Échangez directement avec vos clients au sujet de leurs devis et commandes.
-      </p>
+    <div className="flex flex-col">
+      <div className="mb-3 md:mb-6">
+        <h1 className="font-display text-2xl md:text-3xl font-semibold text-wood-950 mb-0.5">Messagerie</h1>
+        <p className="text-wood-500 text-xs md:text-sm">
+          Échangez directement avec vos clients au sujet de leurs devis et commandes.
+        </p>
+      </div>
 
-      <div className="bg-white border border-wood-700/10 rounded-2xl overflow-hidden flex flex-col md:flex-row h-[600px]">
-        <div className="w-full md:w-72 shrink-0 border-b md:border-b-0 md:border-r border-wood-700/10 flex flex-col">
-          <div className="p-3 border-b border-wood-700/10">
+      <div className="bg-white border border-wood-700/10 rounded-2xl overflow-hidden flex flex-col md:flex-row h-[calc(100dvh-170px)] min-h-[460px] md:h-[650px] shadow-xs">
+        {/* Liste des conversations (sur mobile : masquée si une conversation est active) */}
+        <div
+          className={`w-full md:w-80 shrink-0 border-b md:border-b-0 md:border-r border-wood-700/10 flex-col h-full ${
+            activeId ? 'hidden md:flex' : 'flex'
+          }`}
+        >
+          <div className="p-3 border-b border-wood-700/10 shrink-0">
             <div className="relative">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-wood-400" />
               <input
@@ -94,7 +101,7 @@ export default function Messages() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Rechercher une conversation..."
-                className="w-full border border-wood-700/20 rounded-full pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-red-600"
+                className="w-full border border-wood-700/20 rounded-full pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-red-600 bg-cream-50/50"
               />
             </div>
           </div>
@@ -110,7 +117,7 @@ export default function Messages() {
                     key={c.id}
                     onClick={() => setActiveId(c.id)}
                     className={`w-full text-left px-4 py-3 border-b border-wood-700/10 transition ${
-                      activeId === c.id ? 'bg-cream-100' : 'hover:bg-cream-50'
+                      activeId === c.id ? 'bg-cream-100 font-medium' : 'hover:bg-cream-50'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -126,55 +133,86 @@ export default function Messages() {
                     </p>
                   </button>
                 ))}
-                {filtered.length === 0 && <p className="text-sm text-wood-400 text-center py-8">Aucune conversation trouvée.</p>}
+                {filtered.length === 0 && (
+                  <p className="text-sm text-wood-400 text-center py-8">Aucune conversation trouvée.</p>
+                )}
               </>
             )}
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col min-w-0">
+        {/* Panneau de discussion (sur mobile : visible uniquement si activeId est défini) */}
+        <div
+          className={`flex-1 flex-col min-w-0 h-full ${
+            activeId ? 'flex' : 'hidden md:flex'
+          }`}
+        >
           {active ? (
             <>
-              <div className="px-5 py-4 border-b border-wood-700/10">
-                <p className="font-display font-semibold text-wood-950">{active.user.name}</p>
-                <p className="text-xs text-wood-500">{active.context || active.user.email}</p>
+              {/* En-tête de la conversation */}
+              <div className="px-4 py-3 sm:px-5 sm:py-4 border-b border-wood-700/10 flex items-center justify-between shrink-0 bg-white">
+                <div className="flex items-center gap-3 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setActiveId(null)}
+                    className="md:hidden p-1.5 -ml-1 rounded-lg text-wood-700 hover:bg-cream-100 hover:text-wood-950 transition flex items-center gap-1 text-sm font-medium shrink-0"
+                    aria-label="Retour aux conversations"
+                  >
+                    <ArrowLeft size={19} />
+                  </button>
+                  <div className="min-w-0">
+                    <p className="font-display font-semibold text-wood-950 truncate leading-tight">{active.user.name}</p>
+                    <p className="text-xs text-wood-500 truncate">{active.context || active.user.email}</p>
+                  </div>
+                </div>
               </div>
 
-              <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-3 bg-cream-50">
+              {/* Historique des messages */}
+              <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 bg-cream-50">
                 {loadingMessages ? (
                   <div className="flex items-center gap-2 text-wood-500 text-sm">
                     <Loader2 size={15} className="animate-spin" /> Chargement des messages...
                   </div>
+                ) : messages.length === 0 ? (
+                  <p className="text-sm text-wood-400 text-center py-8">
+                    Aucun message pour l'instant. Démarrez la conversation ci-dessous.
+                  </p>
                 ) : (
                   messages.map((m) => (
                     <div key={m.id} className={`flex ${m.from === 'admin' ? 'justify-end' : 'justify-start'}`}>
                       <div
-                        className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm ${
+                        className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm ${
                           m.from === 'admin'
                             ? 'bg-wood-950 text-cream-100 rounded-br-sm'
                             : 'bg-white border border-wood-700/10 text-wood-800 rounded-bl-sm'
                         }`}
                       >
-                        <p>{m.body}</p>
-                        <p className="text-[10px] mt-1 text-wood-400">{new Date(m.created_at).toLocaleString('fr-FR')}</p>
+                        <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                        <p className="text-[10px] mt-1 text-wood-400 text-right">
+                          {new Date(m.created_at).toLocaleString('fr-FR', {
+                            dateStyle: 'short',
+                            timeStyle: 'short',
+                          })}
+                        </p>
                       </div>
                     </div>
                   ))
                 )}
               </div>
 
-              <form onSubmit={sendMessage} className="p-4 border-t border-wood-700/10 flex items-center gap-2">
+              {/* Formulaire d'envoi ancré en bas */}
+              <form onSubmit={sendMessage} className="p-3 sm:p-4 bg-white border-t border-wood-700/10 flex items-center gap-2 shrink-0">
                 <input
                   type="text"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
                   placeholder="Écrire un message..."
-                  className="flex-1 border border-wood-700/20 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:border-red-600"
+                  className="flex-1 border border-wood-700/20 rounded-full px-4 py-2 sm:py-2.5 text-sm bg-white focus:outline-none focus:border-red-600"
                 />
                 <button
                   type="submit"
-                  disabled={sending}
-                  className="w-10 h-10 shrink-0 rounded-full bg-red-600 text-cream-50 flex items-center justify-center hover:bg-red-700 transition disabled:opacity-60"
+                  disabled={sending || !draft.trim()}
+                  className="w-10 h-10 shrink-0 rounded-full bg-red-600 text-cream-50 flex items-center justify-center hover:bg-red-700 transition disabled:opacity-50"
                   aria-label="Envoyer"
                 >
                   <Send size={16} />
@@ -182,9 +220,12 @@ export default function Messages() {
               </form>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-wood-400 gap-3">
-              <MessageCircle size={32} />
-              <p className="text-sm">Sélectionnez une conversation</p>
+            <div className="flex-1 flex flex-col items-center justify-center text-wood-400 gap-3 p-6 text-center">
+              <MessageCircle size={36} className="text-wood-300" />
+              <p className="text-sm font-medium text-wood-700">Sélectionnez une conversation</p>
+              <p className="text-xs text-wood-400 max-w-xs">
+                Choisissez un client dans la liste pour consulter ses messages ou lui répondre.
+              </p>
             </div>
           )}
         </div>

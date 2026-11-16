@@ -1,5 +1,8 @@
-import { CheckCircle2, MapPin, Timer, Linkedin } from 'lucide-react'
+import { CheckCircle2, MapPin, Timer, Facebook, Linkedin, X, Loader2, ExternalLink } from 'lucide-react'
 import Reveal from '../components/ui/Reveal'
+import TikTokIcon from '../components/ui/TikTokIcon'
+import { useTeam } from '../hooks/useTeam'
+import { ATELIER_ADDRESS, MAP_EMBED_SRC, MAP_DIRECT_URL } from '../lib/location'
 
 const VALUES = [
   { icon: CheckCircle2, title: 'Qualité sans compromis', desc: 'Chaque pièce est contrôlée avant livraison, du premier au dernier détail.' },
@@ -7,22 +10,24 @@ const VALUES = [
   { icon: Timer, title: 'Délais respectés', desc: 'Un planning clair communiqué dès la validation de votre devis.' },
 ]
 
-// TODO: remplacer `photo: null` par le chemin réel de la photo une fois reçue
-// (ex: import photoMarc from '../assets/team/marc.jpg' puis photo: photoMarc)
-const TEAM = [
-  { name: 'Marc Lenux', role: 'Fondateur & Directeur général', color: '#4A2E1A', photo: null },
-  { name: 'Ange Fotso', role: 'Associée & Directrice financière', color: '#6B4426', photo: null },
-  { name: 'Paul Mbarga', role: 'Chef d\'atelier menuiserie', color: '#8A5C34', photo: null },
-  { name: 'Sarah Njoya', role: 'Responsable relation client', color: '#7A4B26', photo: null },
-  { name: 'Éric Talla', role: 'Chef de chantier charpente', color: '#3E2717', photo: null },
-  { name: 'Diane Abena', role: 'Designer mobilier', color: '#A97A48', photo: null },
-]
-
-// TODO: remplacer par l'adresse exacte de LenuxWood
-const MAP_QUERY = 'Zone industrielle, Douala, Cameroun'
-const MAP_EMBED_SRC = `https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`
+function SocialLink({ href, icon: Icon }) {
+  if (!href) return null
+  return (
+    <a
+      href={href}
+      
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-8 h-8 rounded-full border border-wood-700/15 flex items-center justify-center text-wood-500 hover:text-red-600 hover:border-red-600 transition"
+    >
+      <Icon size={14} />
+    </a>
+  )
+}
 
 export default function About() {
+  const { team, loading: teamLoading } = useTeam()
+
   return (
     <>
       <section className="bg-cream-50 py-16 md:py-24">
@@ -87,32 +92,46 @@ export default function About() {
             </h2>
           </Reveal>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {TEAM.map((member, i) => (
-              <Reveal key={member.name} delay={(i % 6) * 60}>
-                <div className="bg-white border border-wood-700/10 rounded-sm overflow-hidden card-lift">
-                  <div className="aspect-[4/3] relative">
-                    {member.photo ? (
-                      <img src={member.photo} alt={member.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="absolute inset-0 grain-bg flex items-center justify-center" style={{ backgroundColor: member.color }}>
-                        <span className="font-display text-3xl font-semibold text-cream-100/80">
-                          {member.name.split(' ').map((n) => n[0]).join('')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5 flex items-center justify-between">
-                    <div>
-                      <p className="font-display font-semibold text-wood-950">{member.name}</p>
-                      <p className="text-xs text-wood-500 mt-0.5">{member.role}</p>
+          {teamLoading ? (
+            <div className="flex items-center justify-center gap-2 text-wood-500 py-10">
+              <Loader2 size={18} className="animate-spin" /> Chargement de l'équipe...
+            </div>
+          ) : team.length === 0 ? (
+            <p className="text-center text-wood-400">L'équipe sera bientôt présentée ici.</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {team.map((member, i) => (
+                <Reveal key={member.id} delay={(i % 6) * 60}>
+                  <div className="bg-white border border-wood-700/10 rounded-sm overflow-hidden card-lift">
+                    <div className="aspect-[4/3] relative">
+                      {member.photo_url ? (
+                        <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 bg-wood-700 grain-bg flex items-center justify-center">
+                          <span className="font-display text-3xl font-semibold text-cream-100/80">
+                            {member.name
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <Linkedin size={16} className="text-wood-400" />
+                    <div className="p-5">
+                      <p className="font-display font-semibold text-wood-950">{member.name}</p>
+                      <p className="text-xs text-wood-500 mt-0.5 mb-3">{member.role}</p>
+                      <div className="flex items-center gap-2">
+                        <SocialLink href={member.social?.facebook} icon={Facebook} />
+                        <SocialLink href={member.social?.linkedin} icon={Linkedin} />
+                        <SocialLink href={member.social?.x} icon={X} />
+                        <SocialLink href={member.social?.tiktok} icon={TikTokIcon} />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -125,17 +144,21 @@ export default function About() {
 
           <div className="grid lg:grid-cols-2 gap-6">
             <Reveal>
-              {/* TODO: remplacer ce bloc par la vraie photo du bâtiment/atelier LenuxWood */}
-              <div className="aspect-[4/3] rounded-sm overflow-hidden relative bg-wood-800 grain-bg">
+              <div className="aspect-[4/3] rounded-sm overflow-hidden relative">
+                <img
+                  src="/images/site/atelier.jpg"
+                  alt="Atelier LenuxWood"
+                  className="w-full h-full object-cover"
+                />
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-wood-950/90 to-transparent">
                   <p className="text-cream-100 font-display text-lg font-semibold">Atelier & showroom LenuxWood</p>
-                  <p className="text-oak-400 text-xs mt-1 tracking-wide">Zone industrielle, Douala</p>
+                  <p className="text-oak-400 text-xs mt-1 tracking-wide">{ATELIER_ADDRESS}</p>
                 </div>
               </div>
             </Reveal>
 
             <Reveal delay={100}>
-              <div className="aspect-[4/3] rounded-sm overflow-hidden border border-wood-700/10">
+              <div className="aspect-[4/3] rounded-sm overflow-hidden border border-wood-700/10 relative group bg-wood-950">
                 <iframe
                   title="Localisation LenuxWood"
                   src={MAP_EMBED_SRC}
@@ -146,6 +169,14 @@ export default function About() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
+                <a
+                  href={MAP_DIRECT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute bottom-3 right-3 bg-wood-950/90 hover:bg-red-600 text-cream-50 text-xs font-semibold px-3 py-1.5 rounded-full shadow-md transition flex items-center gap-1.5 backdrop-blur-xs"
+                >
+                  <ExternalLink size={13} /> Ouvrir Google Maps
+                </a>
               </div>
             </Reveal>
           </div>

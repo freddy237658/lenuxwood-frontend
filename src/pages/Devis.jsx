@@ -1,12 +1,14 @@
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useRef, useState } from 'react'
-import { UploadCloud, CheckCircle2, Loader2, FileCheck } from 'lucide-react'
+import { useEffect, useRef, useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { UploadCloud, CheckCircle2, Loader2, FileCheck, UserCheck } from 'lucide-react'
 import ModuleIcon from '../components/ui/ModuleIcon'
 import { useCategories, categoryName } from '../hooks/useCategories'
 import { useTranslation } from 'react-i18next'
 import api from '../lib/api'
+import { useAuth } from '../context/AuthContext'
 
 const schema = z.object({
   category_id: z.string().min(1, 'Choisissez un module'),
@@ -22,17 +24,48 @@ const schema = z.object({
 export default function Devis() {
   const { i18n } = useTranslation()
   const { categories } = useCategories()
+  const [searchParams] = useSearchParams()
+  const moduleParam = searchParams.get('module')
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [attachment, setAttachment] = useState(null)
   const fileInputRef = useRef(null)
+  const { user, isAuthenticated } = useAuth()
 
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: zodResolver(schema) })
+
+  // Pré-remplir le module depuis l'URL
+  useEffect(() => {
+    if (moduleParam && categories.length > 0) {
+      const match = categories.find((c) => c.slug === moduleParam)
+      if (match) {
+        setValue('category_id', String(match.id))
+      }
+    }
+  }, [moduleParam, categories, setValue])
+
+  // Pré-remplir les coordonnées si l'utilisateur est connecté
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.name) setValue('name', user.name)
+      if (user.email) setValue('email', user.email)
+      if (user.phone) setValue('phone', user.phone)
+    }
+  }, [isAuthenticated, user, setValue])
+
+  const sortedCategories = useMemo(() => {
+    return [...categories].sort((a, b) => {
+      if (a.slug === 'meubles-cuisine') return -1
+      if (b.slug === 'meubles-cuisine') return 1
+      return 0
+    })
+  }, [categories])
 
   const onSubmit = async (data) => {
     setSubmitError('')
@@ -50,8 +83,15 @@ export default function Devis() {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setSubmitted(true)
-    } catch {
-      setSubmitError("Une erreur est survenue lors de l'envoi. Vérifiez vos informations et réessayez.")
+    } catch (err) {
+      const msg = err?.response?.data?.message
+      setSubmitError(
+        msg
+          ? `Erreur : ${msg}`
+          : err?.response?.status
+          ? `Erreur serveur (${err.response.status}). Réessayez dans un instant.`
+          : "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez."
+      )
     }
   }
 
@@ -80,6 +120,20 @@ export default function Devis() {
           <p className="text-wood-500 mt-2">Réponse sous 48h, partout au Cameroun.</p>
         </div>
 
+        {moduleParam === 'meubles-cuisine' && (
+          <div className="mb-6 p-4 bg-red-600/10 border border-red-600/30 rounded-sm flex items-start gap-3 shadow-xs">
+            <span className="w-6 h-6 rounded-full bg-red-600 text-cream-50 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+              ✦
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-wood-950">Projet Cuisine Moderne sur Mesure</p>
+              <p className="text-xs text-wood-700 mt-0.5">
+                Le module <strong>Meubles de cuisine</strong> a été pré-sélectionné. Précisez votre configuration (îlot central, en L, en U, électroménager encastré) et vos dimensions indicatives pour un devis et une étude personnalisée sous 48h.
+              </p>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-wood-700/10 rounded-sm p-6 md:p-10">
           <p className="font-display font-semibold text-xl text-wood-950 mb-6">1. Quel module vous intéresse ?</p>
           <Controller
@@ -88,25 +142,38 @@ export default function Devis() {
             defaultValue=""
             render={({ field }) => (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2">
-                {categories.map((cat) => (
-                  <label
-                    key={cat.slug}
-                    className={`border rounded-sm p-4 text-center cursor-pointer transition flex flex-col items-center gap-2 ${
-                      field.value === String(cat.id) ? 'border-red-600 bg-red-600/5' : 'border-wood-700/20 hover:border-red-600'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      className="hidden"
-                      checked={field.value === String(cat.id)}
-                      onChange={() => field.onChange(String(cat.id))}
-                    />
-                    <div className="w-8 h-8 flex items-center justify-center text-wood-700">
-                      <ModuleIcon name={cat.icon} size={28} />
-                    </div>
-                    <span className="text-xs font-medium text-wood-800">{categoryName(cat, i18n.language)}</span>
-                  </label>
-                ))}
+                {sortedCategories.map((cat) => {
+                  const isKitchen = cat.slug === 'meubles-cuisine'
+                  const isChecked = field.value === String(cat.id)
+                  return (
+                    <label
+                      key={cat.slug}
+                      className={`border rounded-sm p-4 text-center cursor-pointer transition flex flex-col items-center gap-2 relative ${
+                        isChecked
+                          ? 'border-red-600 bg-red-600/5 ring-1 ring-red-600/20'
+                          : isKitchen
+                          ? 'border-red-600/30 hover:border-red-600 bg-cream-50/50'
+                          : 'border-wood-700/20 hover:border-red-600'
+                      }`}
+                    >
+                      {isKitchen && (
+                        <span className="absolute -top-2 right-2 bg-red-600 text-cream-50 text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase">
+                          Vedette
+                        </span>
+                      )}
+                      <input
+                        type="radio"
+                        className="hidden"
+                        checked={isChecked}
+                        onChange={() => field.onChange(String(cat.id))}
+                      />
+                      <div className={`w-8 h-8 flex items-center justify-center ${isKitchen ? 'text-red-600' : 'text-wood-700'}`}>
+                        <ModuleIcon name={cat.icon} size={28} />
+                      </div>
+                      <span className="text-xs font-medium text-wood-800">{categoryName(cat, i18n.language)}</span>
+                    </label>
+                  )
+                })}
               </div>
             )}
           />
@@ -118,7 +185,11 @@ export default function Devis() {
               <label className="text-sm font-medium text-wood-800 mb-1.5 block">Décrivez votre besoin</label>
               <textarea
                 rows={4}
-                placeholder="Ex: cuisine en L de 4m, finition claire, budget indicatif..."
+                placeholder={
+                  moduleParam === 'meubles-cuisine'
+                    ? "Ex: Cuisine moderne avec îlot central de 2m40, façade noir mat et bois d'iroko, électroménager encastré..."
+                    : "Ex: cuisine en L de 4m, finition claire, budget indicatif..."
+                }
                 className="w-full border border-wood-700/20 rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-red-600"
                 {...register('description')}
               />
@@ -171,6 +242,14 @@ export default function Devis() {
           </div>
 
           <p className="font-display font-semibold text-xl text-wood-950 mb-6">3. Vos coordonnées</p>
+
+          {isAuthenticated && user && (
+            <div className="mb-4 flex items-center gap-2 text-sm text-wood-700 bg-wood-950/5 border border-wood-700/15 rounded-sm px-4 py-2.5">
+              <UserCheck size={16} className="text-red-600 shrink-0" />
+              <span>Connecté en tant que <strong>{user.name}</strong> — vos coordonnées ont été pré-remplies.</span>
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 gap-5 mb-10">
             <div>
               <label className="text-sm font-medium text-wood-800 mb-1.5 block">Nom complet</label>

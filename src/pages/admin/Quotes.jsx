@@ -99,7 +99,7 @@ export default function Quotes() {
           <Loader2 size={18} className="animate-spin" /> Chargement...
         </div>
       ) : (
-        <div className="bg-white border border-wood-700/10 rounded-2xl overflow-hidden overflow-x-auto">
+        <div className="bg-white border border-wood-700/10 rounded-2xl overflow-x-auto touch-pan-y">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-cream-100 text-left text-wood-500 text-xs uppercase tracking-wide">

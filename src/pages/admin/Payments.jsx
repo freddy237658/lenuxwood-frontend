@@ -5,16 +5,30 @@ import { formatPrice } from '../../lib/format'
 import StatusBadge from '../../components/admin/StatusBadge'
 import StatCard from '../../components/admin/StatCard'
 
+const STATUS_OPTIONS = [
+  { value: 'pending', label: 'En attente' },
+  { value: 'confirmed', label: 'Confirmé' },
+  { value: 'failed', label: 'Échoué' },
+]
+
 export default function Payments() {
   const [payments, setPayments] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true)
     api
       .get('/payments')
       .then((res) => setPayments(res.data.data ?? []))
       .finally(() => setLoading(false))
-  }, [])
+  }
+
+  useEffect(load, [])
+
+  const updateStatus = async (id, status) => {
+    await api.patch(`/payments/${id}`, { status })
+    load()
+  }
 
   const stats = useMemo(() => {
     const confirmed = payments.filter((p) => p.status === 'confirmed')
@@ -46,7 +60,7 @@ export default function Payments() {
           <Loader2 size={18} className="animate-spin" /> Chargement...
         </div>
       ) : (
-        <div className="bg-white border border-wood-700/10 rounded-2xl overflow-hidden overflow-x-auto">
+        <div className="bg-white border border-wood-700/10 rounded-2xl overflow-x-auto touch-pan-y">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-cream-100 text-left text-wood-500 text-xs uppercase tracking-wide">
@@ -75,7 +89,20 @@ export default function Payments() {
                   <td className="px-5 py-3.5 text-wood-600">{formatPrice(p.amount)} FCFA</td>
                   <td className="px-5 py-3.5 text-wood-500 text-xs">{new Date(p.created_at).toLocaleDateString('fr-FR')}</td>
                   <td className="px-5 py-3.5">
-                    <StatusBadge status={p.status_label} />
+                    <select
+                      value={p.status}
+                      onChange={(e) => updateStatus(p.id, e.target.value)}
+                      className="text-xs border border-wood-700/20 rounded-full px-2.5 py-1.5 bg-white mb-1.5"
+                    >
+                      {STATUS_OPTIONS.map((s) => (
+                        <option key={s.value} value={s.value}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div>
+                      <StatusBadge status={p.status_label} />
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { useParams, Link, Navigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ShieldCheck, Loader2, Check } from 'lucide-react'
 import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'

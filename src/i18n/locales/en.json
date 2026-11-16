@@ -15,7 +15,7 @@
     "title1": "Wood,",
     "title2": "crafted",
     "title3": "to last.",
-    "subtitle": "Roofing, furniture, ceilings, floors, doors and wardrobes, made to measure. LenuxWood dresses your home from roof to floor, with Cameroonian wood craftsmanship.",
+    "subtitle": "Specialist in bespoke modern kitchens, contemporary furniture, roofing and exceptional interior design. LenuxWood elevates your home with Cameroonian wood craftsmanship.",
     "ctaQuote": "Get a quote",
     "ctaWork": "See our work",
     "stat1": "Projects delivered",
@@ -38,7 +38,7 @@
   },
   "modules": {
     "charpente": { "name": "Roofing", "desc": "Sturdy roof structures, engineered to last through every season." },
-    "cuisine": { "name": "Kitchen furniture", "desc": "Custom kitchens, designed for everyday use and style." },
+    "cuisine": { "name": "Modern Kitchens & Furniture", "desc": "Bespoke contemporary kitchens, kitchen islands, smart storage and noble woods." },
     "salon": { "name": "Living room furniture", "desc": "Coffee tables, TV units, bookshelves and elegant storage." },
     "chambre": { "name": "Bedroom furniture", "desc": "Beds, headboards and wardrobes designed for rest." },
     "plafonds": { "name": "Ceilings", "desc": "Suspended ceilings and wood panelling for a warm interior." },

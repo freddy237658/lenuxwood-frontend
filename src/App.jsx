@@ -31,6 +31,8 @@ import AdminOrders from './pages/admin/Orders'
 import AdminPayments from './pages/admin/Payments'
 import AdminUsers from './pages/admin/Users'
 import AdminRealisations from './pages/admin/Realisations'
+import AdminTeam from './pages/admin/Team'
+import AdminContactMessages from './pages/admin/ContactMessages'
 
 
 import ClientOrders from './pages/client/Orders'
@@ -51,7 +53,8 @@ export default function App() {
       {/* Site public */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/catalogue" element={<Catalogue />} />        <Route path="/produit/:slug" element={<Product />} />
+        <Route path="/catalogue" element={<Catalogue />} />        
+        <Route path="/produit/:slug" element={<Product />} />
         <Route path="/realisations" element={<Realisations />} />
         <Route path="/recherche" element={<Search />} />
             <Route path="/devis" element={<Devis />} />
@@ -106,6 +109,8 @@ export default function App() {
         <Route path="paiements" element={<AdminPayments />} />
         <Route path="messagerie" element={<AdminMessages />} />
         <Route path="utilisateurs" element={<AdminUsers />} />
+                <Route path="equipe" element={<AdminTeam />} />
+        <Route path="messages-contact" element={<AdminContactMessages />} />
       </Route>
     </Routes>
   )

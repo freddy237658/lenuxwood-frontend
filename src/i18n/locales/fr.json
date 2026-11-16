@@ -15,7 +15,7 @@
     "title1": "Le bois,",
     "title2": "façonné",
     "title3": "pour durer.",
-    "subtitle": "Charpente, meubles, plafonds, sols, portes et armoires sur mesure. LenuxWood habille votre maison du toit au sol, avec le savoir-faire du bois camerounais.",
+    "subtitle": "Spécialiste des cuisines modernes sur mesure, meubles contemporains, charpente et agencements d'exception. LenuxWood sublime votre maison avec le savoir-faire du bois camerounais.",
     "ctaQuote": "Demander un devis",
     "ctaWork": "Voir nos réalisations",
     "stat1": "Projets réalisés",
@@ -38,7 +38,7 @@
   },
   "modules": {
     "charpente": { "name": "Charpente", "desc": "Structures de toiture robustes, calculées pour durer sous toutes les saisons." },
-    "cuisine": { "name": "Meubles de cuisine", "desc": "Cuisines sur mesure, pensées pour l'usage quotidien et le style." },
+    "cuisine": { "name": "Cuisines modernes & Meubles", "desc": "Cuisines contemporaines sur mesure, îlots centraux, rangements intelligents et bois nobles." },
     "salon": { "name": "Meubles de salon", "desc": "Tables basses, meubles TV, bibliothèques et rangements élégants." },
     "chambre": { "name": "Meubles de chambre", "desc": "Lits, têtes de lit et dressings pensés pour le repos." },
     "plafonds": { "name": "Plafonds", "desc": "Faux-plafonds et habillages bois pour un intérieur chaleureux." },
