@@ -105,7 +105,7 @@ export default function Login() {
           </button>
 
           <p className="text-xs text-wood-400 text-center mt-4">
-            Astuce démo : utilisez un email contenant « admin » pour accéder au panel administrateur.
+            Astuce découverte : utilisez un email contenant vos identifiants corrects  pour accéder a votre panel .
           </p>
         </form>
 
