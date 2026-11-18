@@ -144,7 +144,7 @@ export default function Home() {
           <Reveal className="max-w-xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cream-50/10 backdrop-blur-sm border border-cream-50/20 text-cream-100 text-xs font-semibold tracking-wide mb-6">
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span>SPÉCIALISTE CUISINES MODERNES &amp; BOIS NOBLE</span>
+              <span>MENUISERIE MODERNE &amp; MEUBLES SUR MESURE · DOUALA</span>
             </div>
             <h1 className="font-display text-[2.6rem] leading-[1.05] md:text-6xl md:leading-[1.03] font-semibold text-cream-50 tracking-tight">
               {t('home.title1')}
@@ -315,7 +315,7 @@ export default function Home() {
                   <div className="aspect-[4/3] overflow-hidden">
                     <img
                       src={style.image}
-                      alt={style.title}
+                      alt={`${style.title} - Cuisine moderne sur mesure à Douala Lenuxwood`}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
@@ -382,7 +382,7 @@ export default function Home() {
                 >
                   <img
                     src={item.image_url}
-                    alt={item.title}
+                    alt={`${item.title}${item.city ? ` à ${item.city}` : ''} - Projet de menuiserie Lenuxwood Douala`}
                     loading="lazy"
                     decoding="async"
                     className="absolute inset-0 w-full h-full object-cover"

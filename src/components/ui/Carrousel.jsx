@@ -6,34 +6,64 @@ export default function Carrousel() {
   const IMAGES = [
     {
       src: "/images/realisations/[MC-J00169-131] MEUBLE DE CUISINE CRIARE ENSEMBLE DE 10 PIECES.jpg",
-      alt: "Meuble de cuisine — ensemble 10 pièces",
+      alt: "Meuble de cuisine moderne en bois ensemble 10 pièces - Lenuxwood Douala",
     },
     {
       src: "/images/realisations/[MC-J00229-85+MC-5203] MEUBLE DE CUISINE MC-J00229-85.jpg",
-      alt: "Meuble de cuisine sur mesure",
+      alt: "Cuisine moderne sur mesure avec îlot central à Douala - Lenuxwood",
     },
     {
       src: "/images/realisations/[MC-MP-2087] MEUBLE DE CUISINE.jpg",
-      alt: "Meuble de cuisine",
+      alt: "Conception et pose de cuisine contemporaine en bois noble - Cameroun",
     },
     {
       src: "/images/realisations/d12c98a3-d611-4e53-be47-baf9526f22d2.jpg",
-      alt: "Réalisation LenuxWood",
+      alt: "Agencement intérieur moderne et mobilier sur mesure - Lenuxwood Douala",
     },
     {
       src: "/images/realisations/1642501298687Tonda Menuiserie9.jpg",
-      alt: "Réalisation menuiserie",
+      alt: "Menuiserie moderne et fabrication de placards sur mesure au Cameroun",
     },
-    { src: "/images/realisations/hero-2.jfif", alt: "Aménagement intérieur" },
-    { src: "/images/realisations/images (7).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (14).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (15).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (17).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (18).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (20).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (22).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (24).jfif", alt: "Mobilier bois" },
-    { src: "/images/realisations/images (31).jfif", alt: "Mobilier bois" },
+    {
+      src: "/images/realisations/hero-2.jfif",
+      alt: "Aménagement intérieur et boiseries haut de gamme à Douala",
+    },
+    {
+      src: "/images/realisations/images (7).jfif",
+      alt: "Mobilier de salon moderne en bois noble Iroko - Lenuxwood",
+    },
+    {
+      src: "/images/realisations/images (14).jfif",
+      alt: "Table à manger contemporaine en bois massif - Menuiserie Douala",
+    },
+    {
+      src: "/images/realisations/images (15).jfif",
+      alt: "Meuble TV moderne et étagères suspendues en bois au Cameroun",
+    },
+    {
+      src: "/images/realisations/images (17).jfif",
+      alt: "Dressing sur mesure et armoire chambre en bois - Lenuxwood Douala",
+    },
+    {
+      src: "/images/realisations/images (18).jfif",
+      alt: "Porte intérieure moderne en bois massif Teck et Iroko",
+    },
+    {
+      src: "/images/realisations/images (20).jfif",
+      alt: "Mobilier de bureau design et agencement d'espace professionnel à Douala",
+    },
+    {
+      src: "/images/realisations/images (22).jfif",
+      alt: "Chambre à coucher contemporaine avec lit en bois massif - Lenuxwood",
+    },
+    {
+      src: "/images/realisations/images (24).jfif",
+      alt: "Meuble de salle de bain suspendu hydrofuge en bois noble",
+    },
+    {
+      src: "/images/realisations/images (31).jfif",
+      alt: "Menuiserie bois sur mesure et finitions de luxe à Douala Cameroun",
+    },
   ];
 
   const [current, setCurrent] = useState(0);

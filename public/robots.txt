@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /compte
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /mot-de-passe-oublie
+
+Sitemap: https://lenuxwood.com/sitemap.xml

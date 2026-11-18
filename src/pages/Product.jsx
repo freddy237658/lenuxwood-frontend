@@ -67,7 +67,7 @@ export default function Product() {
               {mainImage ? (
                 <img
                   src={mainImage}
-                  alt={product.name}
+                  alt={`${product.name} - Conception et fabrication sur mesure Lenuxwood Douala`}
                   decoding="async"
                   className="w-full h-full object-cover"
                 />
@@ -87,7 +87,7 @@ export default function Product() {
                   >
                     <img
                       src={img.url}
-                      alt=""
+                      alt={`${product.name} vue détaillée ${i + 1} - Lenuxwood Douala`}
                       loading="lazy"
                       decoding="async"
                       className="w-full h-full object-cover"

@@ -21,7 +21,7 @@ export default function ProductCard({ product, delay = 0 }) {
           {image ? (
             <img
               src={image}
-              alt={product.name}
+              alt={`${product.name} - Meuble sur mesure Lenuxwood Douala`}
               loading="lazy"
               decoding="async"
               className="w-full h-full object-cover"

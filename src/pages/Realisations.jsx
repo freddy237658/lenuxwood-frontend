@@ -62,7 +62,7 @@ export default function Realisations() {
                 <div className="gallery-item aspect-[4/3] rounded-sm overflow-hidden relative cursor-pointer">
                   <img
                     src={item.image_url}
-                    alt={item.title}
+                    alt={`${item.title}${item.city ? ` à ${item.city}` : ''} - Menuiserie bois Lenuxwood Cameroun`}
                     loading="lazy"
                     decoding="async"
                     className="absolute inset-0 w-full h-full object-cover"
