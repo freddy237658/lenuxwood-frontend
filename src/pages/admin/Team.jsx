@@ -4,6 +4,7 @@ import api from '../../lib/api'
 import StatCard from '../../components/admin/StatCard'
 import RowActions from '../../components/admin/RowActions'
 import DetailModal from '../../components/admin/DetailModal'
+import { optimizeImage, formatBytes } from '../../lib/imageOptimizer'
 
 const emptyForm = {
   name: '',
@@ -15,6 +16,7 @@ const emptyForm = {
   x_url: '',
   photoFile: null,
   photoPreview: null,
+  optimizationInfo: null,
 }
 
 export default function Team() {
@@ -23,6 +25,7 @@ export default function Team() {
   const [query, setQuery] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [optimizing, setOptimizing] = useState(false)
   const [viewing, setViewing] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -61,6 +64,7 @@ export default function Team() {
       x_url: member.social?.x || '',
       photoFile: null,
       photoPreview: member.photo_url,
+      optimizationInfo: null,
     })
     setModalOpen(true)
   }
@@ -71,10 +75,22 @@ export default function Team() {
     load()
   }
 
-  const onPhotoChange = (e) => {
+  const onPhotoChange = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setForm((f) => ({ ...f, photoFile: file, photoPreview: URL.createObjectURL(file) }))
+
+    setOptimizing(true)
+    try {
+      const res = await optimizeImage(file, { maxWidth: 1000, maxHeight: 1000, quality: 0.82 })
+      setForm((f) => ({
+        ...f,
+        photoFile: res.file,
+        photoPreview: res.previewUrl,
+        optimizationInfo: res,
+      }))
+    } finally {
+      setOptimizing(false)
+    }
   }
 
   const submit = async (e) => {
@@ -251,6 +267,16 @@ export default function Team() {
                   <div className="text-xs text-wood-500">
                     <p className="font-medium text-wood-700 mb-0.5">Cliquez pour choisir une photo</p>
                     <p>JPG ou PNG, format portrait ou carré</p>
+                    {optimizing && (
+                      <p className="text-red-600 font-medium mt-1 flex items-center gap-1">
+                        <Loader2 size={12} className="animate-spin" /> Compression & optimisation...
+                      </p>
+                    )}
+                    {form.optimizationInfo && form.optimizationInfo.savedPercent > 0 && !optimizing && (
+                      <p className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-medium mt-1.5 inline-block">
+                        ✓ Optimisée : {formatBytes(form.optimizationInfo.originalSize)} → {formatBytes(form.optimizationInfo.compressedSize)} (-{form.optimizationInfo.savedPercent}%)
+                      </p>
+                    )}
                   </div>
                   <input type="file" accept="image/*" onChange={onPhotoChange} className="hidden" />
                 </label>
@@ -341,7 +367,7 @@ export default function Team() {
                 </button>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || optimizing}
                   className="btn-primary flex-1 justify-center py-3 rounded-full font-semibold disabled:opacity-60 inline-flex items-center gap-2"
                 >
                   {saving && <Loader2 size={15} className="animate-spin" />}

@@ -84,6 +84,7 @@ export default function Carrousel() {
                 src={encodeURI(img.src)}
                 alt={img.alt}
                 loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -127,3 +128,5 @@ export default function Carrousel() {
     </section>
   );
 }
+
+

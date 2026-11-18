@@ -6,6 +6,7 @@ import { useCategories, categoryName } from '../../hooks/useCategories'
 import StatCard from '../../components/admin/StatCard'
 import RowActions from '../../components/admin/RowActions'
 import DetailModal from '../../components/admin/DetailModal'
+import { optimizeImage, formatBytes } from '../../lib/imageOptimizer'
 
 const emptyForm = {
   category_id: '',
@@ -14,6 +15,7 @@ const emptyForm = {
   is_featured: false,
   imageFile: null,
   imagePreview: null,
+  optimizationInfo: null,
 }
 
 export default function Realisations() {
@@ -25,6 +27,7 @@ export default function Realisations() {
   const [query, setQuery] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [optimizing, setOptimizing] = useState(false)
   const [viewing, setViewing] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -62,14 +65,27 @@ export default function Realisations() {
       is_featured: r.is_featured,
       imageFile: null,
       imagePreview: r.image_url,
+      optimizationInfo: null,
     })
     setModalOpen(true)
   }
 
-  const onImageChange = (e) => {
+  const onImageChange = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setForm((f) => ({ ...f, imageFile: file, imagePreview: URL.createObjectURL(file) }))
+
+    setOptimizing(true)
+    try {
+      const res = await optimizeImage(file, { maxWidth: 1600, maxHeight: 1600, quality: 0.82 })
+      setForm((f) => ({
+        ...f,
+        imageFile: res.file,
+        imagePreview: res.previewUrl,
+        optimizationInfo: res,
+      }))
+    } finally {
+      setOptimizing(false)
+    }
   }
 
   const remove = async (id) => {
@@ -212,6 +228,16 @@ export default function Realisations() {
                   <div className="text-xs text-wood-500">
                     <p className="font-medium text-wood-700 mb-0.5">Cliquez pour choisir une image</p>
                     <p>JPG ou PNG, idéalement au format 4:3</p>
+                    {optimizing && (
+                      <p className="text-red-600 font-medium mt-1 flex items-center gap-1">
+                        <Loader2 size={12} className="animate-spin" /> Compression & optimisation...
+                      </p>
+                    )}
+                    {form.optimizationInfo && form.optimizationInfo.savedPercent > 0 && !optimizing && (
+                      <p className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-medium mt-1.5 inline-block">
+                        ✓ Optimisée : {formatBytes(form.optimizationInfo.originalSize)} → {formatBytes(form.optimizationInfo.compressedSize)} (-{form.optimizationInfo.savedPercent}%)
+                      </p>
+                    )}
                   </div>
                   <input type="file" accept="image/*" onChange={onImageChange} className="hidden" required={!editingId} />
                 </label>
@@ -272,7 +298,7 @@ export default function Realisations() {
                 </button>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || optimizing}
                   className="btn-primary flex-1 justify-center py-3 rounded-full font-semibold disabled:opacity-60 inline-flex items-center gap-2"
                 >
                   {saving && <Loader2 size={15} className="animate-spin" />}

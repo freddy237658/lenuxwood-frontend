@@ -60,7 +60,13 @@ export default function Realisations() {
             {realisations.map((item, i) => (
               <Reveal key={item.id} delay={(i % 6) * 60}>
                 <div className="gallery-item aspect-[4/3] rounded-sm overflow-hidden relative cursor-pointer">
-                  <img src={item.image_url} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                  <img
+                    src={item.image_url}
+                    alt={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-wood-950/85 to-transparent">
                     <p className="text-cream-100 font-display text-base font-semibold">{item.title}</p>
                     <p className="text-oak-400 text-xs mt-0.5 tracking-wide">{item.city}</p>

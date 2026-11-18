@@ -19,7 +19,13 @@ export default function ProductCard({ product, delay = 0 }) {
       >
         <div className="aspect-[4/3] relative overflow-hidden">
           {image ? (
-            <img src={image} alt={product.name} className="w-full h-full object-cover" />
+            <img
+              src={image}
+              alt={product.name}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="absolute inset-0 grain-bg-light" style={{ backgroundColor: FALLBACK_COLOR }} />
           )}

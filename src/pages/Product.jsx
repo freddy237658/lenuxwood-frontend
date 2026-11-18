@@ -59,7 +59,12 @@ export default function Product() {
           <Reveal>
             <div className="aspect-square rounded-sm overflow-hidden relative mb-4">
               {mainImage ? (
-                <img src={mainImage} alt={product.name} className="w-full h-full object-cover" />
+                <img
+                  src={mainImage}
+                  alt={product.name}
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <div className="absolute inset-0 grain-bg" style={{ backgroundColor: FALLBACK_COLOR }} />
               )}
@@ -74,7 +79,13 @@ export default function Product() {
                       i === activeImage ? 'border-2 border-red-600' : 'opacity-70'
                     }`}
                   >
-                    <img src={img.url} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={img.url}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
