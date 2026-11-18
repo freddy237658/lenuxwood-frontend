@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, ArrowRight, Search, User, LogOut, LayoutDashboard, ShoppingCart } from 'lucide-react'
+import { Menu, X, ArrowRight, Search, User, LogOut, LayoutDashboard, ShoppingCart, Phone } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
 import logo from '../../assets/logo.jpg'
@@ -231,6 +231,21 @@ export default function Header() {
             <Link to="/devis" onClick={() => setOpen(false)} className="btn-primary text-center mt-2 px-5 py-3 rounded-sm font-semibold text-sm">
               {t('nav.quote')}
             </Link>
+
+            {/* Téléphones + langue — visibles uniquement dans le menu mobile */}
+            <div className="mt-3 pt-3 border-t border-wood-700/10 space-y-2 text-sm">
+              <a href="tel:+237697647799" className="flex items-center gap-2 py-1 text-wood-900 hover:text-red-600 transition">
+                <Phone size={16} className="text-red-600" /> +237 6 97 64 77 99
+              </a>
+              <a href="tel:+237652964883" className="flex items-center gap-2 py-1 text-wood-900 hover:text-red-600 transition">
+                <Phone size={16} className="text-red-600" /> +237 6 52 96 48 83
+              </a>
+              <div className="flex items-center gap-3 pt-2">
+                <button onClick={() => changeLang('fr')} className={`tracking-wide hover:text-red-600 transition ${i18n.language === 'fr' ? 'text-red-600 font-semibold' : ''}`}>FR</button>
+                <span className="text-wood-500">/</span>
+                <button onClick={() => changeLang('en')} className={`tracking-wide hover:text-red-600 transition ${i18n.language === 'en' ? 'text-red-600 font-semibold' : ''}`}>EN</button>
+              </div>
+            </div>
 
               <Link to="/panier" onClick={() => setOpen(false)} className="flex items-center gap-2 py-2">
                 <ShoppingCart size={16} /> Panier {totalCount > 0 && `(${totalCount})`}

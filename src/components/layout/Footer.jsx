@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import logo from '../../assets/logo.jpg'
+import SocialLinks from '../ui/SocialLinks'
 
 export default function Footer() {
   const { t } = useTranslation()
@@ -45,6 +46,7 @@ export default function Footer() {
             <li>+237 6 97 64 77 99</li>
             <li>arthurmouakem35@gmail.com</li>
           </ul>
+          <SocialLinks variant="dark" className="mt-4" />
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-5 md:px-10 pt-6 border-t border-wood-800 flex flex-col md:flex-row items-center justify-between gap-3">

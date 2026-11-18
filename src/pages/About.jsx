@@ -3,6 +3,7 @@ import Reveal from '../components/ui/Reveal'
 import TikTokIcon from '../components/ui/TikTokIcon'
 import { useTeam } from '../hooks/useTeam'
 import { ATELIER_ADDRESS, MAP_EMBED_SRC, MAP_DIRECT_URL } from '../lib/location'
+import SocialLinks from '../components/ui/SocialLinks'
 
 const VALUES = [
   { icon: CheckCircle2, title: 'Qualité sans compromis', desc: 'Chaque pièce est contrôlée avant livraison, du premier au dernier détail.' },
@@ -41,6 +42,10 @@ export default function About() {
             particuliers, architectes et entreprises dans tout le pays, avec la même exigence artisanale
             qu'au premier jour.
           </p>
+          <div className="mt-7 flex flex-col items-center gap-3">
+            <p className="text-xs font-bold tracking-[0.25em] text-wood-500">SUIVEZ-NOUS</p>
+            <SocialLinks />
+          </div>
         </Reveal>
       </section>
 

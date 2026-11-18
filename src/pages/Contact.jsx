@@ -3,6 +3,7 @@ import { MapPin, Phone, Mail, Clock, CheckCircle2, Loader2, ExternalLink, UserCh
 import api from '../lib/api'
 import { ATELIER_ADDRESS, MAP_EMBED_SRC, MAP_DIRECT_URL } from '../lib/location'
 import { useAuth } from '../context/AuthContext'
+import SocialLinks from '../components/ui/SocialLinks'
 
 export default function Contact() {
   const { user, isAuthenticated } = useAuth()
@@ -170,6 +171,10 @@ export default function Contact() {
                   <Clock size={18} className="text-oak-400 shrink-0 mt-0.5" />
                   <span>Lun – Sam, 8h – 18h</span>
                 </div>
+              </div>
+              <div className="mt-5 pt-5 border-t border-wood-800">
+                <p className="text-xs font-bold tracking-[0.2em] text-oak-400 mb-3">SUIVEZ-NOUS</p>
+                <SocialLinks variant="dark" />
               </div>
             </div>
             <div className="aspect-[4/3] rounded-sm overflow-hidden border border-wood-700/10 relative group bg-wood-950">

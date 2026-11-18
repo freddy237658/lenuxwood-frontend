@@ -109,7 +109,7 @@ export default function Catalogue() {
               <div className="mb-7">
                 <p className="font-display font-semibold text-wood-950 mb-3">Essence de bois</p>
                 <div className="flex flex-wrap gap-2">
-                  {['Iroko', 'Acajou', 'Teck', 'Wengé'].map((wood) => (
+                  {['Iroko', 'Bibolo', 'Doussié', 'Bilinga', 'Movingui', 'Padouk'].map((wood) => (
                     <span key={wood} className="px-3 py-1.5 border border-wood-700/20 rounded-sm text-xs text-wood-600">
                       {wood}
                     </span>
