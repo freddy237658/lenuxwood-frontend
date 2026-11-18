@@ -102,18 +102,21 @@ const KITCHEN_STYLES = [
     tag: 'Tendance 2026',
     desc: 'Alliance sublime entre bois noble d’Iroko et finitions contemporaines, rangements coulissants grande capacité.',
     price: 'À partir de 650 000 FCFA',
+    image: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=800&q=80&auto=format&fit=crop',
   },
   {
     title: 'Cuisine Linéaire Noir Mat & Teck',
     tag: 'Minimaliste & Épuré',
     desc: 'Esthétique moderne raffinée, colonnes d’encastrement électroménager et crédence hydrofuge en bois traité.',
     price: 'À partir de 450 000 FCFA',
+    image: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=800&q=80&auto=format&fit=crop',
   },
   {
     title: 'Cuisine en U avec Rangements Suspendus',
     tag: 'Espace optimisé',
     desc: 'Circulation fluide, double plan de préparation, rangements d’angle ergonomiques et finitions soignées.',
     price: 'À partir de 550 000 FCFA',
+    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80&auto=format&fit=crop',
   },
 ]
 
@@ -308,7 +311,16 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6">
             {KITCHEN_STYLES.map((style, i) => (
               <Reveal key={style.title} delay={150 + i * 80}>
-                <div className="bg-wood-900/90 border border-wood-700/30 rounded-sm p-6 flex flex-col justify-between h-full hover:border-oak-400/50 transition-all card-lift">
+                <div className="bg-wood-900/90 border border-wood-700/30 rounded-sm overflow-hidden flex flex-col justify-between h-full hover:border-oak-400/50 transition-all card-lift">
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={style.image}
+                      alt={style.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-6 flex flex-col flex-1">
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <span className="bg-red-600/20 text-red-400 border border-red-600/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -318,7 +330,7 @@ export default function Home() {
                     </div>
                     <h4 className="font-display font-semibold text-xl text-cream-50 mb-3">{style.title}</h4>
                     <p className="text-xs text-wood-300 leading-relaxed mb-6">{style.desc}</p>
-                  </div>
+                  </div></div>
                   <div className="pt-4 border-t border-wood-800 flex items-center justify-between">
                     <span className="text-xs text-wood-400">100% sur mesure</span>
                     <Link

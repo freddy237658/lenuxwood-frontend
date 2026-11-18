@@ -43,9 +43,14 @@ export default {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(-50%)' },
         },
+        'topbar-scroll': {
+          from: { transform: 'translateX(100%)' },
+          to: { transform: 'translateX(-100%)' },
+        },
       },
       animation: {
         'scroll-left': 'scroll-left 32s linear infinite',
+        'topbar-scroll': 'topbar-scroll 14s linear infinite',
       },
     },
   },

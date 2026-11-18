@@ -1,9 +1,9 @@
 // Adresse officielle de l'atelier LenuxWood
-export const ATELIER_ADDRESS = 'Kotto Centre Commercial & Logpom Papyrus, Cameroun'
+export const ATELIER_ADDRESS = 'Hôtel Repos ROIS, Douala, Cameroun'
 
 // Lien direct de partage Google Maps (ouvre l'application native ou le site Google Maps avec l'épingle exacte)
-export const MAP_DIRECT_URL = 'https://maps.app.goo.gl/3i3VAHR9iEHcRYMg8?g_st=awb'
+export const MAP_DIRECT_URL = 'https://maps.app.goo.gl/3heYDRb41Eygb3wbA'
 
-// Coordonnées GPS exactes (Douala 5e - secteur Kotto / Logpom Papyrus)
+// Coordonnées GPS exactes (Hôtel Repos ROIS, Douala)
 // Le marqueur rouge (pin) est épinglé directement sur ces coordonnées
-export const MAP_EMBED_SRC = `https://maps.google.com/maps?q=4.0826,9.7708&hl=fr&z=16&output=embed`
+export const MAP_EMBED_SRC = `https://maps.google.com/maps?q=4.0698,9.7190&hl=fr&z=16&output=embed`

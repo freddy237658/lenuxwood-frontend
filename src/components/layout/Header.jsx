@@ -45,8 +45,17 @@ export default function Header() {
     <>
       <div className="w-full bg-wood-950 text-cream-100 text-xs md:text-sm">
         <div className="max-w-7xl mx-auto px-5 md:px-10 py-2 flex items-center justify-between">
-          <p className="tracking-wide truncate">
-            <span className="text-oak-400">✦</span> {t('topbar.shipping')}
+          <p className="tracking-wide truncate overflow-hidden md:overflow-visible">
+            <span className="hidden md:inline"><span className="text-oak-400">✦</span> {t('topbar.shipping')}</span>
+            <span className="md:hidden block overflow-hidden whitespace-nowrap">
+              <span className="flex w-max animate-topbar-scroll">
+                {[0, 1].map((rep) => (
+                  <span key={rep} aria-hidden={rep === 1} className="flex items-center whitespace-nowrap pr-12">
+                    <span className="text-oak-400">✦</span> {t('topbar.shipping')}
+                  </span>
+                ))}
+              </span>
+            </span>
           </p>
           <div className="hidden md:flex items-center gap-4 shrink-0">
             <span className="tracking-wide">+237 6 97 64 77 99 / +237 652964883</span>
