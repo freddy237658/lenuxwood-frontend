@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ShieldCheck, Loader2, Check } from 'lucide-react'
@@ -20,6 +20,12 @@ export default function Product() {
   const [activeImage, setActiveImage] = useState(0)
   const { addItem } = useCart()
   const [added, setAdded] = useState(false)
+
+  useEffect(() => {
+    if (product?.name) {
+      document.title = `${product.name} | Lenuxwood Menuiserie Douala`
+    }
+  }, [product])
 
   const handleAddToCart = () => {
     addItem(product, 1)

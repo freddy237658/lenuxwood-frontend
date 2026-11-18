@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import AdminLayout from './layouts/AdminLayout'
@@ -6,6 +6,31 @@ import ClientLayout from './layouts/ClientLayout'
 
 import { useEffect } from 'react'
 import api from './lib/api'
+
+const PAGE_TITLES = {
+  '/': 'Lenuxwood - Menuiserie Moderne à Douala | Meubles sur Mesure',
+  '/catalogue': 'Catalogue Meubles & Cuisines Modernes | Lenuxwood Douala',
+  '/realisations': 'Nos Réalisations de Menuiserie à Douala | Lenuxwood',
+  '/devis': 'Devis Menuiserie & Cuisines sur Mesure | Lenuxwood Douala',
+  '/a-propos': 'À Propos de Lenuxwood | Atelier de Menuiserie à Douala',
+  '/contact': 'Contact & Localisation | Lenuxwood Douala',
+  '/panier': 'Mon Panier | Lenuxwood',
+  '/recherche': 'Recherche Produits & Meubles | Lenuxwood',
+}
+
+function PageTitleUpdater() {
+  const location = useLocation()
+
+  useEffect(() => {
+    if (PAGE_TITLES[location.pathname]) {
+      document.title = PAGE_TITLES[location.pathname]
+    } else if (!location.pathname.startsWith('/produit/')) {
+      document.title = 'Lenuxwood - Menuiserie Moderne à Douala | Meubles sur Mesure'
+    }
+  }, [location.pathname])
+
+  return null
+}
 
 import Home from './pages/Home'
 import Catalogue from './pages/Catalogue'
@@ -49,7 +74,9 @@ export default function App() {
   }, [])
 
   return (
-    <Routes>
+    <>
+      <PageTitleUpdater />
+      <Routes>
       {/* Site public */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
@@ -113,5 +140,6 @@ export default function App() {
         <Route path="messages-contact" element={<AdminContactMessages />} />
       </Route>
     </Routes>
+    </>
   )
 }
