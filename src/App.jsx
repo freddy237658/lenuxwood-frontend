@@ -10,7 +10,7 @@ import api from './lib/api'
 import Home from './pages/Home'
 import Catalogue from './pages/Catalogue'
 import Product from './pages/Product'
-import Realisations from './pages/Realisations'
+import Realisations, { RealisationsExtra } from './pages/Realisations'
 import Search from './pages/Search'
 import Devis from './pages/Devis'
 import Cart from './pages/Cart'
@@ -55,7 +55,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/catalogue" element={<Catalogue />} />        
         <Route path="/produit/:slug" element={<Product />} />
-        <Route path="/realisations" element={<Realisations />} />
+        <Route path="/realisations" element={<><Realisations /><RealisationsExtra /></>} />
         <Route path="/recherche" element={<Search />} />
             <Route path="/devis" element={<Devis />} />
         <Route path="/panier" element={<Cart />} />

@@ -5,17 +5,17 @@ import TikTokIcon from "./TikTokIcon";
 export const SOCIAL_LINKS = [
   {
     name: "Facebook",
-    href: "https://www.facebook.com/lenuxwood",
+    href: "https://www.facebook.com/share/1FMobE1xto/",
     icon: Facebook,
   },
   {
     name: "Instagram",
-    href: "https://www.instagram.com/lenuxwood",
+    href: "https://www.instagram.com/lenuxwood_cameroun?lqvp=MWp1OTFwb3BqaDhiNw==",
     icon: Instagram,
   },
   {
     name: "TikTok",
-    href: "https://www.tiktok.com/@lenuxwood",
+    href: "https://www.tiktok.com/@lenux_wood",
     icon: TikTokIcon,
   },
   {

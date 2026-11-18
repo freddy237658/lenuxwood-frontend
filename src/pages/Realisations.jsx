@@ -4,6 +4,8 @@ import { Loader2 } from 'lucide-react'
 import Reveal from '../components/ui/Reveal'
 import { useRealisations } from '../hooks/useRealisations'
 import { useCategories, categoryName } from '../hooks/useCategories'
+import Essences from '../components/ui/Essences'
+import Carrousel from '../components/ui/Carrousel'
 
 export default function Realisations() {
   const { i18n } = useTranslation()
@@ -70,5 +72,14 @@ export default function Realisations() {
         )}
       </div>
     </section>
+  )
+}
+
+export function RealisationsExtra() {
+  return (
+    <>
+      <Essences />
+      <Carrousel />
+    </>
   )
 }
