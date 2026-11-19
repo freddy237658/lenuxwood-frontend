@@ -35,7 +35,7 @@ function Counter({ target, suffix = '' }) {
   )
 }
 
-const HERO_IMAGES = ['/images/site/hero-1.jpg', '/images/site/hero-2.jpg', '/images/site/hero-3.jpeg']
+const HERO_IMAGES = ['/images/site/hero-1.jpg', '/images/site/hero-2.jpg', '/images/site/hero-3.jpeg', '/images/site/hero-4.jpg', '/images/site/hero-5.webp', '/images/site/hero-7.jpg', '/images/site/atelier.jpg']
 
 function HeroBackground() {
   const [index, setIndex] = useState(0)

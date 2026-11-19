@@ -3,19 +3,37 @@ import Reveal from "./Reveal";
 // Essences de bois utilisées par LenuxWood
 const ESSENCES = [
   {
-    name: "Acajou",
+    name: "Bibolo",
     desc: "Bois rougeâtre, tendre et facile à travailler, idéal pour les meubles de prestige et les finitions chaleureuses.",
     img: "/images/essences/acajou.jpg",
     tone: "#7a3b2e",
   },
   {
-    name: "Teck",
+    name: "Bilinga",
+    desc: "Bois dense et imputrescible, reconnu pour sa durabilité exceptionnelle et son grain doré élégant.",
+    img: "/images/essences/teck.jpg",
+    tone: "#9a6b35",
+  },
+  {
+    name: "Padouk",
     desc: "Bois dense et imputrescible, reconnu pour sa durabilité exceptionnelle et son grain doré élégant.",
     img: "/images/essences/teck.jpg",
     tone: "#9a6b35",
   },
   {
     name: "Iroko",
+    desc: "Bois dur d'Afrique de l'Ouest, résistant aux insectes et à l'humidité, parfait pour cuisines et extérieurs.",
+    img: "/images/essences/iroko.jpg",
+    tone: "#8a6a3f",
+  },
+  {
+    name: "Movingui",
+    desc: "Bois dur d'Afrique de l'Ouest, résistant aux insectes et à l'humidité, parfait pour cuisines et extérieurs.",
+    img: "/images/essences/iroko.jpg",
+    tone: "#8a6a3f",
+  },
+  {
+    name: "Doussie",
     desc: "Bois dur d'Afrique de l'Ouest, résistant aux insectes et à l'humidité, parfait pour cuisines et extérieurs.",
     img: "/images/essences/iroko.jpg",
     tone: "#8a6a3f",
