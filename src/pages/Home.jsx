@@ -35,7 +35,7 @@ function Counter({ target, suffix = '' }) {
   )
 }
 
-const HERO_IMAGES = ['/images/site/hero-1.jpg', '/images/site/hero-2.jpg', '/images/site/hero-3.jpeg', '/images/site/hero-4.jpg', '/images/site/hero-5.webp', '/images/site/hero-7.jpg', '/images/site/atelier.jpg']
+const HERO_IMAGES = ['/images/site/hero-1.jpg', '/images/site/hero-2.jpg','/images/site/hero-2.jpeg','/images/site/hero-3.jpeg','/images/site/hero-3 (2).jpeg','/images/site/hero-4.jpg', '/images/site/hero-5.jpeg','/images/site/hero-6.jpeg', '/images/site/hero-7.jpg','/images/site/hero-8.jpg','/images/site/hero-9.jpg', '/images/site/atelier.jpg']
 
 function HeroBackground() {
   const [index, setIndex] = useState(0)
