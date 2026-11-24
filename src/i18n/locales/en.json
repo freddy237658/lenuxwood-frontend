@@ -34,7 +34,64 @@
     "ctaBandTitle1": "Describe your project,",
     "ctaBandTitle2": "we'll handle the rest.",
     "ctaBandSubtitle": "Standard furniture or custom build — get a clear quote within 48h, anywhere in Cameroon.",
-    "ctaBandButton": "Get my free quote"
+    "ctaBandButton": "Get my free quote",
+    "heroSlides": [
+      {
+        "badge": "Modern woodwork & bespoke furniture · Douala",
+        "title1": "Wood,",
+        "titleAccent": "crafted",
+        "title2": "to last.",
+        "subtitle": "Specialists in modern joinery and bespoke kitchens in Douala. Contemporary furniture, roofing and exceptional fit-outs in noble Cameroonian wood.",
+        "primaryCta": "Get a quote",
+        "primaryTo": "/devis",
+        "secondaryCta": "See our work",
+        "secondaryTo": "/realisations"
+      },
+      {
+        "badge": "Bespoke modern kitchens",
+        "title1": "The kitchen,",
+        "titleAccent": "heart",
+        "title2": "of your home.",
+        "subtitle": "Central islands, clean fronts and smart storage: we design your kitchen in 3D before crafting it in 100% water-resistant wood, built for the Cameroonian climate.",
+        "primaryCta": "Explore our kitchens",
+        "primaryTo": "/catalogue?module=meubles-cuisine",
+        "secondaryCta": "Kitchen 3D quote",
+        "secondaryTo": "/devis?module=meubles-cuisine"
+      },
+      {
+        "badge": "Noble Cameroonian wood",
+        "title1": "Iroko, Teak, Mahogany:",
+        "titleAccent": "the soul",
+        "title2": "of our species.",
+        "subtitle": "We source our species from local suppliers, dry them with care and work them in our Douala workshop to reveal their unique grain.",
+        "primaryCta": "Discover our craft",
+        "primaryTo": "/a-propos",
+        "secondaryCta": "Full catalogue",
+        "secondaryTo": "/catalogue"
+      },
+      {
+        "badge": "Complete fit-outs, room by room",
+        "title1": "Living room, bedroom,",
+        "titleAccent": "wardrobes",
+        "title2": "& ceilings.",
+        "subtitle": "Bookshelves, TV units, headboards, optimised wardrobes and wooden ceilings: one coherent world, designed for your space and exact dimensions.",
+        "primaryCta": "See our work",
+        "primaryTo": "/realisations",
+        "secondaryCta": "Get a quote",
+        "secondaryTo": "/devis"
+      },
+      {
+        "badge": "Anywhere in Cameroon",
+        "title1": "Local craftsmanship,",
+        "titleAccent": "across",
+        "title2": "the country.",
+        "subtitle": "From Douala to Yaoundé, Bafoussam and beyond: mastered workshop production, nationwide delivery and secure payment via Orange Money or MTN MoMo.",
+        "primaryCta": "Order my piece",
+        "primaryTo": "/devis",
+        "secondaryCta": "Contact us",
+        "secondaryTo": "/contact"
+      }
+    ]
   },
   "modules": {
     "charpente": { "name": "Roofing", "desc": "Sturdy roof structures, engineered to last through every season." },

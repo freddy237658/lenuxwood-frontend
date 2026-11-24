@@ -1,66 +1,12 @@
 import { useTranslation } from 'react-i18next'
-import { useEffect, useState } from 'react'
 import { ArrowRight, Check, Ruler, Smartphone, Truck, Sparkles, Layers, ShieldCheck, Compass } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Reveal from '../components/ui/Reveal'
 import ModuleCard from '../components/ModuleCard'
+import HeroCarousel from '../components/HeroCarousel'
 import { useRealisations } from '../hooks/useRealisations'
 import { useCategories, categoryName } from '../hooks/useCategories'
-
-function Counter({ target, suffix = '' }) {
-  const [value, setValue] = useState(0)
-
-  useEffect(() => {
-    let frame
-    let current = 0
-    const step = Math.max(1, Math.round(target / 40))
-    const tick = () => {
-      current = Math.min(target, current + step)
-      setValue(current)
-      if (current < target) frame = requestAnimationFrame(tick)
-    }
-    const timeout = setTimeout(() => (frame = requestAnimationFrame(tick)), 200)
-    return () => {
-      clearTimeout(timeout)
-      cancelAnimationFrame(frame)
-    }
-  }, [target])
-
-  return (
-    <span>
-      {value}
-      {suffix}
-    </span>
-  )
-}
-
-const HERO_IMAGES = ['/images/site/hero-1.jpg', '/images/site/hero-2.jpg','/images/site/hero-2.jpeg','/images/site/hero-3.jpeg','/images/site/hero-3 (2).jpeg','/images/site/hero-4.jpg', '/images/site/hero-5.jpeg','/images/site/hero-6.jpeg', '/images/site/hero-7.jpg','/images/site/hero-8.jpg','/images/site/hero-9.jpg', '/images/site/atelier.jpg']
-
-function HeroBackground() {
-  const [index, setIndex] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((i) => (i + 1) % HERO_IMAGES.length)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
-
-  return (
-    <div className="absolute inset-0">
-      {HERO_IMAGES.map((src, i) => (
-        <div
-          key={src}
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
-          style={{ backgroundImage: `url('${src}')`, opacity: i === index ? 1 : 0 }}
-        />
-      ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-wood-950 via-wood-950/80 to-wood-950/30" />
-      <div className="absolute inset-0 bg-gradient-to-t from-wood-950 via-transparent to-wood-950/20" />
-    </div>
-  )
-}
 
 const FEATURES = [
   { icon: Check, title: 'Bois sélectionné', desc: 'Essences locales choisies pour leur résistance et leur beauté naturelle.' },
@@ -136,96 +82,31 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative bg-wood-950 overflow-hidden">
-        <HeroBackground />
-
-        <div className="max-w-7xl mx-auto px-5 md:px-10 pt-20 md:pt-28 pb-20 relative z-10">
-          <Reveal className="max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cream-50/10 backdrop-blur-sm border border-cream-50/20 text-cream-100 text-xs font-semibold tracking-wide mb-6">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span>MENUISERIE MODERNE &amp; MEUBLES SUR MESURE · DOUALA</span>
-            </div>
-            <h1 className="font-display text-[2.6rem] leading-[1.05] md:text-6xl md:leading-[1.03] font-semibold text-cream-50 tracking-tight">
-              {t('home.title1')}
-              <br />
-              <span className="italic font-medium text-oak-300">{t('home.title2')}</span> {t('home.title3')}
-            </h1>
-            <p className="mt-6 text-cream-100/80 text-base md:text-lg max-w-md leading-relaxed">{t('home.subtitle')}</p>
-            
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button to="/devis">
-                {t('home.ctaQuote')} <ArrowRight size={16} />
-              </Button>
-              <Button
-                to="/catalogue?module=meubles-cuisine"
-                className="!bg-oak-400 !text-wood-950 hover:!bg-oak-300 font-semibold"
-              >
-                Cuisines Modernes ✦
-              </Button>
-              <Button
-                to="/realisations"
-                variant="outline"
-                className="!border-cream-50/40 !text-cream-50 hover:!bg-cream-50 hover:!text-wood-950"
-              >
-                {t('home.ctaWork')}
-              </Button>
-            </div>
-
-            <div className="mt-12 grid grid-cols-3 gap-6 max-w-md border-t border-cream-50/15 pt-6">
-              <div>
-                <p className="font-display text-3xl font-semibold text-cream-50">
-                  <Counter target={500} />
-                </p>
-                <p className="text-xs text-cream-100/60 mt-1 tracking-wide">{t('home.stat1')}</p>
-              </div>
-              <div>
-                <p className="font-display text-3xl font-semibold text-cream-50">
-                  <Counter target={15} suffix="+" />
-                </p>
-                <p className="text-xs text-cream-100/60 mt-1 tracking-wide">{t('home.stat2')}</p>
-              </div>
-              <div>
-                <p className="font-display text-3xl font-semibold text-cream-50">
-                  <Counter target={10} suffix="+" />
-                </p>
-                <p className="text-xs text-cream-100/60 mt-1 tracking-wide">{t('home.stat3')}</p>
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={150} className="hidden lg:block absolute right-10 xl:right-20 bottom-4 max-w-[240px]">
-            <div className="bg-cream-50 border border-wood-700/10 shadow-2xl rounded-sm px-5 py-4">
-              <p className="font-display text-sm italic text-wood-700 leading-snug">
-                « Notre cuisine moderne sur mesure en Iroko est la pièce maîtresse de la maison ! »
-              </p>
-              <p className="text-[11px] text-wood-500 mt-2 font-semibold tracking-wide">— Famille N., Yaoundé</p>
-            </div>
-          </Reveal>
-        </div>
-
-        {/* Ticker défilant */}
-        <div className="w-full bg-wood-950/90 backdrop-blur-sm py-3.5 overflow-hidden border-t border-cream-50/10 relative z-10">
-          <div className="flex w-max animate-scroll-left">
-            {[0, 1].map((rep) => (
-              <span
-                key={rep}
-                className="flex items-center gap-3 pr-10 text-cream-100 font-display italic text-sm md:text-base tracking-wide"
-                aria-hidden={rep === 1}
-              >
-                {sortedCategories.map((cat) => (
-                  <span key={cat.slug} className="flex items-center gap-3">
-                    <span className={cat.slug === 'meubles-cuisine' ? 'text-oak-300 font-semibold' : ''}>
-                      {categoryName(cat, i18n.language)}
+      {/* Hero Section avec Carrousel multi-slides */}
+      <HeroCarousel
+        ticker={
+          <div className="w-full bg-wood-950/90 backdrop-blur-sm py-3.5 overflow-hidden border-t border-cream-50/10 relative z-10">
+            <div className="flex w-max animate-scroll-left">
+              {[0, 1].map((rep) => (
+                <span
+                  key={rep}
+                  className="flex items-center gap-3 pr-10 text-cream-100 font-display italic text-sm md:text-base tracking-wide"
+                  aria-hidden={rep === 1}
+                >
+                  {sortedCategories.map((cat) => (
+                    <span key={cat.slug} className="flex items-center gap-3">
+                      <span className={cat.slug === 'meubles-cuisine' ? 'text-oak-300 font-semibold' : ''}>
+                        {categoryName(cat, i18n.language)}
+                      </span>
+                      <span className="text-red-500 not-italic">✦</span>
                     </span>
-                    <span className="text-red-500 not-italic">✦</span>
-                  </span>
-                ))}
-              </span>
-            ))}
+                  ))}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        }
+      />
 
       {/* Modules de menuiserie (Cuisines en 1ère position) */}
       <section className="bg-cream-50 py-20 md:py-24">

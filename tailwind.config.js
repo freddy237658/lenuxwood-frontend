@@ -47,6 +47,10 @@ export default {
           from: { transform: 'translateX(100%)' },
           to: { transform: 'translateX(-100%)' },
         },
+        heroIn: {
+          from: { opacity: '0', transform: 'translateY(16px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'scroll-left': 'scroll-left 32s linear infinite',

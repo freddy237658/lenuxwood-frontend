@@ -34,7 +34,64 @@
     "ctaBandTitle1": "Décrivez votre projet,",
     "ctaBandTitle2": "on s'occupe du reste.",
     "ctaBandSubtitle": "Meuble standard ou fabrication sur mesure — obtenez un devis clair sous 48h, partout au Cameroun.",
-    "ctaBandButton": "Demander mon devis gratuit"
+    "ctaBandButton": "Demander mon devis gratuit",
+    "heroSlides": [
+      {
+        "badge": "Menuiserie moderne & meubles sur mesure · Douala",
+        "title1": "Le bois,",
+        "titleAccent": "façonné",
+        "title2": "pour durer.",
+        "subtitle": "Spécialiste de la menuiserie moderne et des cuisines sur mesure à Douala. Meubles contemporains, charpente et agencements d'exception en bois noble camerounais.",
+        "primaryCta": "Demander un devis",
+        "primaryTo": "/devis",
+        "secondaryCta": "Voir nos réalisations",
+        "secondaryTo": "/realisations"
+      },
+      {
+        "badge": "Cuisines modernes sur mesure",
+        "title1": "La cuisine,",
+        "titleAccent": "cœur",
+        "title2": "de votre maison.",
+        "subtitle": "Îlots centraux, façades épurées, rangements intelligents : nous dessinons votre cuisine en 3D avant de la façonner dans un bois 100% hydrofuge, taillé pour le climat camerounais.",
+        "primaryCta": "Explorer nos cuisines",
+        "primaryTo": "/catalogue?module=meubles-cuisine",
+        "secondaryCta": "Devis cuisine 3D",
+        "secondaryTo": "/devis?module=meubles-cuisine"
+      },
+      {
+        "badge": "Du bois noble camerounais",
+        "title1": "Iroko, Teck, Acajou :",
+        "titleAccent": "l'âme",
+        "title2": "de nos essences.",
+        "subtitle": "Nous sélectionnons nos essences chez des fournisseurs locaux, les séchons avec soin et les travaillons dans notre atelier de Douala pour révéler leur veinage unique.",
+        "primaryCta": "Découvrir notre savoir-faire",
+        "primaryTo": "/a-propos",
+        "secondaryCta": "Tout le catalogue",
+        "secondaryTo": "/catalogue"
+      },
+      {
+        "badge": "Agencement complet, pièce par pièce",
+        "title1": "Salon, chambre,",
+        "titleAccent": "dressing",
+        "title2": "& plafonds.",
+        "subtitle": "Bibliothèques, meubles TV, têtes de lit, dressings optimisés et faux-plafonds bois : un univers cohérent, pensé pour votre espace et vos dimensions exactes.",
+        "primaryCta": "Voir nos réalisations",
+        "primaryTo": "/realisations",
+        "secondaryCta": "Demander un devis",
+        "secondaryTo": "/devis"
+      },
+      {
+        "badge": "Partout au Cameroun",
+        "title1": "L'artisanat local,",
+        "titleAccent": "à l'échelle",
+        "title2": "du pays.",
+        "subtitle": "De Douala à Yaoundé, Bafoussam et au-delà : fabrication maîtrisée en atelier, livraison nationale et paiement sécurisé par Orange Money ou MTN MoMo.",
+        "primaryCta": "Commander ma pièce",
+        "primaryTo": "/devis",
+        "secondaryCta": "Nous contacter",
+        "secondaryTo": "/contact"
+      }
+    ]
   },
   "modules": {
     "charpente": { "name": "Charpente", "desc": "Structures de toiture robustes, calculées pour durer sous toutes les saisons." },
