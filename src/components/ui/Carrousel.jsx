@@ -8,10 +8,7 @@ export default function Carrousel() {
       src: "/images/realisations/[MC-J00169-131] MEUBLE DE CUISINE CRIARE ENSEMBLE DE 10 PIECES.jpg",
       alt: "Meuble de cuisine moderne en bois ensemble 10 pièces - Lenuxwood Douala",
     },
-    {
-      src: "/images/realisations/[MC-J00229-85+MC-5203] MEUBLE DE CUISINE MC-J00229-85.jpg",
-      alt: "Cuisine moderne sur mesure avec îlot central à Douala - Lenuxwood",
-    },
+
     {
       src: "/images/realisations/[MC-MP-2087] MEUBLE DE CUISINE.jpg",
       alt: "Conception et pose de cuisine contemporaine en bois noble - Cameroun",
@@ -63,6 +60,10 @@ export default function Carrousel() {
     {
       src: "/images/realisations/images (31).jfif",
       alt: "Menuiserie bois sur mesure et finitions de luxe à Douala Cameroun",
+    },
+        {
+      src: "/images/realisations/[MC-J00229-85+MC-5203] MEUBLE DE CUISINE MC-J00229-85.jpg",
+      alt: "Cuisine moderne sur mesure avec îlot central à Douala - Lenuxwood",
     },
   ];
 
